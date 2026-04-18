@@ -99,6 +99,11 @@
 </main>
 
 <script>
+    // Already logged in check
+const existingUser = JSON.parse(localStorage.getItem("helphub_user") || "null");
+if (existingUser) {
+  window.location.href = "/dashboard";
+}
   // ── Tab Switch ───────────────────────────────────────────────
   function switchTab(tab) {
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));

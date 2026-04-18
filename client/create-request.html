@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HelpHub AI - Create Request</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/reqeust.css">
+</head>
+<body>
+
+<nav>
+  <a href="/dashboard" class="nav-logo">
+    <div class="logo-icon">H</div>
+    HelpHub AI
+  </a>
+  <div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/explore">Explore</a>
+    <a href="/create-request" class="active">Create Request</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Create Request</div>
+  <div class="hero-title">Turn a rough problem into a clear help request.</div>
+  <div class="hero-desc">Use built-in AI suggestions for category, urgency, tags, and a stronger description rewrite.</div>
+</div>
+
+<main>
+  <!-- FORM -->
+  <div class="form-card">
+    <div class="alert" id="alertBox"></div>
+
+    <div class="form-group">
+      <label class="form-label">Title</label>
+      <input type="text" class="form-input" id="title" placeholder="Need review on my JavaScript quiz app before submission" oninput="aiAnalyze()"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="description" placeholder="Explain the challenge, your current progress, deadline, and what kind of help would be useful." oninput="aiAnalyze()"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Tags</label>
+        <input type="text" class="form-input" id="tags" placeholder="JavaScript, Debugging, Review"/>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Category</label>
+        <select class="form-select" id="category">
+          <option value="Web Development">Web Development</option>
+          <option value="Design">Design</option>
+          <option value="Career">Career</option>
+          <option value="AI/ML">AI/ML</option>
+          <option value="Mobile">Mobile</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top:22px">
+      <label class="form-label">Urgency</label>
+      <select class="form-select" id="urgency">
+        <option value="High">High</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-ai-suggest" onclick="applyAI()">Apply AI suggestions</button>
+      <button class="btn-publish" id="publishBtn" onclick="publishRequest()">
+        <span id="publish-text">Publish request</span>
+        <div class="spinner" id="publish-spinner"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- AI SIDEBAR -->
+  <div class="ai-card">
+    <div class="ai-label">AI Assistant</div>
+    <div class="ai-title">Smart request guidance</div>
+    <div class="ai-row">
+      <span class="ai-key">Suggested category</span>
+      <span class="ai-val" id="ai-category">Community</span>
+    </div>
+    <div class="ai-row">
+      <span class="ai-key">Detected urgency</span>
+      <span class="ai-val" id="ai-urgency">Low</span>
+    </div>
+    <div class="ai-row">
+      <span class="ai-key">Suggested tags</span>
+      <span class="ai-val muted" id="ai-tags">Add more detail for smarter tags</span>
+    </div>
+    <div class="ai-row">
+      <span class="ai-key">Rewrite suggestion</span>
+      <span class="ai-val muted" id="ai-rewrite">Start describing the challenge to generate a stronger version.</span>
+    </div>
+  </div>
+</main>
+
+<script>
+  // ── Protected route ─────────────────────────────────────────
+  const user = JSON.parse(localStorage.getItem("helphub_user") || "null");
+  if (!user) window.location.href = "/auth";
+
+  // ── Simple AI analysis (local, no API needed) ───────────────
+  const categoryMap = {
+    "web":["html","css","javascript","js","react","node","responsive","portfolio","frontend","backend","express","api"],
+    "design":["figma","ui","ux","design","poster","color","layout","typography","wireframe","prototype"],
+    "career":["interview","internship","job","resume","cv","career","linkedin","salary","offer"],
+    "ai/ml":["ai","ml","machine learning","python","tensorflow","model","dataset","neural"],
+    "mobile":["android","ios","flutter","react native","swift","kotlin","mobile","app"],
+  };
+  const urgencyMap = {
+    high: ["urgent","asap","today","tonight","tomorrow","deadline","emergency","immediately","demo day","before"],
+    low:  ["whenever","no rush","eventually","someday","flexible","anytime"],
+  };
+
+  let aiSuggestion = { category: "Community", urgency: "Low", tags: [], rewrite: "" };
+
+  function aiAnalyze() {
+    const title = document.getElementById("title").value.toLowerCase();
+    const desc  = document.getElementById("description").value.toLowerCase();
+    const text  = title + " " + desc;
+
+    // Category
+    let detectedCat = "Other";
+    for (const [cat, words] of Object.entries(categoryMap)) {
+      if (words.some(w => text.includes(w))) {
+        detectedCat = cat === "web" ? "Web Development"
+          : cat === "ai/ml" ? "AI/ML"
+          : cat.charAt(0).toUpperCase() + cat.slice(1);
+        break;
+      }
+    }
+
+    // Urgency
+    let detectedUrgency = "Medium";
+    if (urgencyMap.high.some(w => text.includes(w))) detectedUrgency = "High";
+    else if (urgencyMap.low.some(w => text.includes(w))) detectedUrgency = "Low";
+
+    // Tags from title words
+    const stopWords = new Set(["a","an","the","my","for","on","in","is","i","to","and","of","with","help","need","before","into"]);
+    const titleWords = document.getElementById("title").value
+      .split(/[\s,]+/)
+      .filter(w => w.length > 2 && !stopWords.has(w.toLowerCase()))
+      .slice(0, 4);
+
+    // Rewrite
+    const rewrite = title.length > 8
+      ? `"${title.charAt(0).toUpperCase() + title.slice(1)} — looking for expert guidance and community support."`
+      : "Start describing the challenge to generate a stronger version.";
+
+    aiSuggestion = { category: detectedCat, urgency: detectedUrgency, tags: titleWords, rewrite };
+
+    // Update sidebar
+    document.getElementById("ai-category").textContent = detectedCat;
+    document.getElementById("ai-category").className   = "ai-val";
+    document.getElementById("ai-urgency").textContent  = detectedUrgency;
+    document.getElementById("ai-urgency").className    = "ai-val";
+    document.getElementById("ai-tags").textContent     = titleWords.length ? titleWords.join(", ") : "Add more detail for smarter tags";
+    document.getElementById("ai-tags").className       = titleWords.length ? "ai-val" : "ai-val muted";
+    document.getElementById("ai-rewrite").textContent  = rewrite;
+    document.getElementById("ai-rewrite").className    = title.length > 8 ? "ai-val" : "ai-val muted";
+  }
+
+  // ── Apply AI to form fields ──────────────────────────────────
+  function applyAI() {
+    if (aiSuggestion.category !== "Community" && aiSuggestion.category !== "Other") {
+      document.getElementById("category").value = aiSuggestion.category;
+    }
+    document.getElementById("urgency").value = aiSuggestion.urgency;
+    if (aiSuggestion.tags.length) {
+      const existing = document.getElementById("tags").value;
+      if (!existing) document.getElementById("tags").value = aiSuggestion.tags.join(", ");
+    }
+  }
+
+  // ── Publish Request ──────────────────────────────────────────
+  async function publishRequest() {
+    const title       = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const tags        = document.getElementById("tags").value;
+    const category    = document.getElementById("category").value;
+    const urgency     = document.getElementById("urgency").value;
+
+    if (!title || !description) {
+      return showAlert("Title aur description zaruri hain.", "error");
+    }
+
+    setLoading(true);
+    showAlert("", "");
+
+    try {
+      const res  = await fetch("/api/requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title, description, tags, category, urgency,
+          author: {
+            id:   user.id,
+            name: user.name,
+            city: user.city || "Pakistan",
+          },
+        }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        showAlert("✅ Request publish ho gayi! Feed mein aa gayi.", "success");
+        setTimeout(() => { window.location.href = "/explore"; }, 1500);
+      } else {
+        showAlert("❌ " + data.message, "error");
+      }
+    } catch (err) {
+      showAlert("❌ Network error. Server check karein.", "error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function setLoading(on) {
+    document.getElementById("publishBtn").disabled          = on;
+    document.getElementById("publish-spinner").style.display = on ? "block" : "none";
+    document.getElementById("publish-text").style.opacity   = on ? "0" : "1";
+  }
+
+  function showAlert(msg, type) {
+    const box = document.getElementById("alertBox");
+    box.className = "alert";
+    box.textContent = msg;
+    if (msg) box.classList.add(type);
+  }
+</script>
+</body>
+</html>

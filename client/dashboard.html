@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HelpHub AI - Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/dash.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="logo-icon">H</div>
+    HelpHub AI
+  </a>
+  <div class="nav-links">
+    <a href="/dashboard" class="active">Dashboard</a>
+    <a href="#" onclick="window.location.href='/explore'">Explore</a>
+    <a href="#" onclick="window.location.href='/create-request'">Create Request</a>
+    <a href="#" onclick="window.location.href='/messages'">Messages</a>
+    <a href="#" onclick="window.location.href='/profile'">Profile</a>
+  </div>
+  <div class="nav-right">
+    <span class="nav-notif">Notifications</span>
+    <button class="btn-ai">Open AI Center</button>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<!-- HERO BANNER -->
+<div class="hero-banner">
+  <div class="hero-label">Dashboard</div>
+  <div class="hero-title" id="welcomeMsg">Welcome back.</div>
+  <div class="hero-desc">Your command center for requests, AI insights, helper momentum, and live community activity.</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Trust Score</div>
+    <div class="stat-num">92%</div>
+    <div class="stat-desc">Driven by solved requests and consistent support.</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Helping</div>
+    <div class="stat-num">3</div>
+    <div class="stat-desc">Requests where you are currently listed as a helper.</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Open Requests</div>
+    <div class="stat-num">2</div>
+    <div class="stat-desc">Community requests currently active across the feed.</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">AI Pulse</div>
+    <div class="stat-num serif">1 trends</div>
+    <div class="stat-desc">Trend count detected in the latest request activity.</div>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="main-grid">
+
+  <!-- LEFT -->
+  <div class="left-section">
+    <div class="section-label">Recent Requests</div>
+    <div class="section-header">
+      <div class="section-title">What the community needs right now</div>
+      <button class="btn-feed">Go to feed</button>
+    </div>
+
+    <!-- Card 1 -->
+    <div class="req-card">
+      <div class="req-tags">
+        <span class="tag tag-web">Web Development</span>
+        <span class="tag tag-high">High</span>
+        <span class="tag tag-open">Open</span>
+      </div>
+      <div class="req-title">Need help making my portfolio responsive before demo day</div>
+      <div class="req-desc">My HTML/CSS portfolio breaks on tablets and I need layout guidance before tomorrow evening.</div>
+      <div class="req-footer-tags">
+        <span class="ftag">HTML/CSS</span>
+        <span class="ftag">Responsive</span>
+        <span class="ftag">Portfolio</span>
+      </div>
+      <div class="req-bottom">
+        <div>
+          <div class="req-author">Sara Noor</div>
+          <div class="req-meta">Karachi • 1 helper interested</div>
+        </div>
+        <button class="btn-open">Open details</button>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="req-card">
+      <div class="req-tags">
+        <span class="tag tag-design">Design</span>
+        <span class="tag tag-medium">Medium</span>
+        <span class="tag tag-open">Open</span>
+      </div>
+      <div class="req-title">Looking for Figma feedback on a volunteer event poster</div>
+      <div class="req-desc">I have a draft poster for a campus community event and want sharper hierarchy, spacing, and CTA copy.</div>
+      <div class="req-footer-tags">
+        <span class="ftag">Figma</span>
+        <span class="ftag">Poster</span>
+        <span class="ftag">DesignReview</span>
+      </div>
+      <div class="req-bottom">
+        <div>
+          <div class="req-author">Ayesha Khan</div>
+          <div class="req-meta">Lahore • 2 helpers interested</div>
+        </div>
+        <button class="btn-open">Open details</button>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="req-card">
+      <div class="req-tags">
+        <span class="tag tag-career">Career</span>
+        <span class="tag tag-low">Low</span>
+        <span class="tag tag-solved">Solved</span>
+      </div>
+      <div class="req-title">Need mock interview support for internship applications</div>
+      <div class="req-desc">Applying to frontend internships and need someone to practice behavioral and technical interview questions with me.</div>
+      <div class="req-footer-tags">
+        <span class="ftag">Interview Prep</span>
+        <span class="ftag">Career</span>
+        <span class="ftag">Frontend</span>
+      </div>
+      <div class="req-bottom">
+        <div>
+          <div class="req-author">Sara Noor</div>
+          <div class="req-meta">Remote • 2 helpers interested</div>
+        </div>
+        <button class="btn-open">Open details</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="right-sidebar">
+
+    <!-- AI Insights -->
+    <div class="sidebar-card">
+      <div class="section-label">AI Insights</div>
+      <div class="sidebar-card-title">Suggested actions for you</div>
+      <div class="insight-row">
+        <span class="insight-key">Most requested category</span>
+        <span class="insight-val">Web Development</span>
+      </div>
+      <div class="insight-row">
+        <span class="insight-key">Your strongest trust driver</span>
+        <span class="insight-val">Design Ally</span>
+      </div>
+      <div class="insight-row">
+        <span class="insight-key">AI says you can mentor in</span>
+        <span class="insight-val">HTML/CSS, UI/UX, Career Guidance, Figma</span>
+      </div>
+      <div class="insight-row">
+        <span class="insight-key">Your active requests</span>
+        <span class="insight-val">1</span>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="sidebar-card">
+      <div class="section-label">Notifications</div>
+      <div class="sidebar-card-title">Latest updates</div>
+      <div class="notif-item">
+        <div>
+          <div class="notif-text">Ayesha Khan offered help on "Looking for Figma feedback on a volunteer event poster"</div>
+          <div class="notif-meta">Match • Just now</div>
+        </div>
+        <span class="badge-unread">Unread</span>
+      </div>
+      <div class="notif-item">
+        <div>
+          <div class="notif-text">New helper matched to your responsive portfolio request</div>
+          <div class="notif-meta">Match • 12 min ago</div>
+        </div>
+        <span class="badge-unread">Unread</span>
+      </div>
+      <div class="notif-item">
+        <div>
+          <div class="notif-text">Your trust score increased after a solved request</div>
+          <div class="notif-meta">Reputation • 1 hr ago</div>
+        </div>
+        <span class="badge-unread">Unread</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── Protected Route — login check ──────────────────────────
+  const user = JSON.parse(localStorage.getItem("helphub_user") || "null");
+  if (!user) {
+    window.location.href = "/auth";
+  } else {
+    // Welcome message mein naam dikao
+    document.getElementById("welcomeMsg").textContent = "Welcome back, " + user.name + ".";
+  }
+
+  // ── Logout ─────────────────────────────────────────────────
+  function logout() {
+    localStorage.removeItem("helphub_user");
+    window.location.href = "/auth";
+  }
+</script>
+
+</body>
+</html>
