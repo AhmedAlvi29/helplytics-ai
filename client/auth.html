@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HelpHub AI - Auth</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="logo-icon">H</div>
+    HelpHub AI
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="#">Explore</a>
+    <a href="#">Leaderboard</a>
+  </div>
+</nav>
+
+<main>
+  <div class="auth-wrapper">
+
+    <!-- LEFT -->
+    <div class="auth-left">
+      <div class="left-label">Community Access</div>
+      <div class="left-title">Enter the support network.</div>
+      <p class="left-desc">Choose a demo identity, set your role, and jump into a multi-page product flow designed for asking, offering, and tracking help with a premium interface.</p>
+      <ul class="left-list">
+        <li>Role-based entry for Need Help, Can Help, or Both</li>
+        <li>Direct path into dashboard, requests, AI Center, and community feed</li>
+        <li>Email verification for secure community access</li>
+      </ul>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="auth-right">
+      <div class="right-label">Login / Signup</div>
+      <div class="right-title">Authenticate your community profile</div>
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('register')">Register</button>
+        <button class="tab-btn" onclick="switchTab('login')">Login</button>
+      </div>
+
+      <!-- Alert Box -->
+      <div class="alert" id="alertBox"></div>
+
+      <!-- REGISTER FORM -->
+      <div id="registerForm">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="reg-name" placeholder="Sara Noor"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="reg-email" placeholder="you@email.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="reg-password" placeholder="Min 6 characters"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Role selection</label>
+          <select class="form-select" id="reg-role">
+            <option value="Both">Both</option>
+            <option value="Need Help">Need Help</option>
+            <option value="Can Help">Can Help</option>
+          </select>
+        </div>
+        <button class="btn-continue" id="registerBtn" onclick="handleRegister()">
+          <span id="reg-btn-text">Create Account</span>
+          <div class="spinner" id="reg-spinner"></div>
+        </button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="login-email" placeholder="community@helphub.ai"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="login-password" placeholder="••••••••"/>
+        </div>
+        <button class="btn-continue" id="loginBtn" onclick="handleLogin()">
+          <span id="login-btn-text">Continue to dashboard</span>
+          <div class="spinner" id="login-spinner"></div>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script>
+  // ── Tab Switch ───────────────────────────────────────────────
+  function switchTab(tab) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    event.target.classList.add("active");
+    document.getElementById("registerForm").style.display = tab === "register" ? "block" : "none";
+    document.getElementById("loginForm").style.display   = tab === "login"    ? "block" : "none";
+    showAlert("", "");
+  }
+
+  // ── Alert ────────────────────────────────────────────────────
+  function showAlert(msg, type) {
+    const box = document.getElementById("alertBox");
+    box.className = "alert";
+    box.textContent = msg;
+    if (msg) box.classList.add(type);
+  }
+
+  // ── Loading State ────────────────────────────────────────────
+  function setLoading(btnId, spinnerId, textId, loading) {
+    document.getElementById(btnId).disabled = loading;
+    document.getElementById(spinnerId).style.display = loading ? "block" : "none";
+    document.getElementById(textId).style.opacity    = loading ? "0" : "1";
+  }
+
+  // ── REGISTER ─────────────────────────────────────────────────
+  async function handleRegister() {
+    const name     = document.getElementById("reg-name").value.trim();
+    const email    = document.getElementById("reg-email").value.trim();
+    const password = document.getElementById("reg-password").value;
+    const role     = document.getElementById("reg-role").value;
+
+    if (!name || !email || !password) {
+      return showAlert("Tamam fields bhari honi chahiye.", "error");
+    }
+    if (password.length < 6) {
+      return showAlert("Password kam az kam 6 characters ka hona chahiye.", "error");
+    }
+
+    setLoading("registerBtn", "reg-spinner", "reg-btn-text", true);
+    showAlert("", "");
+
+    try {
+      const res  = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        showAlert("✅ " + data.message, "success");
+        document.getElementById("reg-name").value = "";
+        document.getElementById("reg-email").value = "";
+        document.getElementById("reg-password").value = "";
+      } else {
+        showAlert("❌ " + data.message, "error");
+      }
+    } catch (err) {
+      showAlert("❌ Network error. Server check karein.", "error");
+    } finally {
+      setLoading("registerBtn", "reg-spinner", "reg-btn-text", false);
+    }
+  }
+
+  // ── LOGIN ─────────────────────────────────────────────────────
+  async function handleLogin() {
+    const email    = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value;
+
+    if (!email || !password) {
+      return showAlert("Email aur password daalein.", "error");
+    }
+
+    setLoading("loginBtn", "login-spinner", "login-btn-text", true);
+    showAlert("", "");
+
+    try {
+      const res  = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        showAlert("✅ Login successful! Redirect ho raha hai...", "success");
+        localStorage.setItem("helphub_user", JSON.stringify(data.user));
+        setTimeout(() => { window.location.href = "/dashboard"; }, 1200);
+      } else {
+        showAlert("❌ " + data.message, "error");
+      }
+    } catch (err) {
+      showAlert("❌ Network error. Server check karein.", "error");
+    } finally {
+      setLoading("loginBtn", "login-spinner", "login-btn-text", false);
+    }
+  }
+
+  // Enter key support
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      const isRegister = document.getElementById("registerForm").style.display !== "none";
+      isRegister ? handleRegister() : handleLogin();
+    }
+  });
+</script>
+</body>
+</html>

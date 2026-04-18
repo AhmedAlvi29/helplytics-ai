@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HelpHub AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-icon">H</div>
+    HelpHub AI
+  </a>
+  <div class="nav-links">
+    <a href="#" class="active">Home</a>
+    <a href="#">Explore</a>
+    <a href="#">Leaderboard</a>
+    <a href="#">AI Center</a>
+  </div>
+  <div class="nav-right">
+    <span class="live-signal">Live community signals</span>
+    <button class="btn-join" onclick="window.location.href='/auth'">Join the platform</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <!-- Left -->
+  <div class="hero-left">
+    <div class="hero-label">SMIT Grand Coding Night 2026</div>
+    <h1 class="hero-title">Find help faster.<br>Become help that<br>matters.</h1>
+    <p class="hero-desc">HelpHub AI is a community-powered support network for students, mentors, creators, and builders. Ask for help, offer help, track impact, and let AI surface smarter matches across the platform.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary">Open product demo</button>
+      <button class="btn-secondary">Post a request</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Members</div>
+        <div class="stat-num">384+</div>
+        <div class="stat-desc">Students, mentors, and helpers in the loop.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Requests</div>
+        <div class="stat-num">54+</div>
+        <div class="stat-desc">Support posts shared across learning journeys.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Solved</div>
+        <div class="stat-num">23+</div>
+        <div class="stat-desc">Problems resolved through fast community action.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right dark card -->
+  <div class="hero-right">
+    <div class="orb"></div>
+    <div class="eco-label">Live Product Feel</div>
+    <div class="eco-title">More than a form. More like an ecosystem.</div>
+    <p class="eco-desc">A polished multi-page experience inspired by product platforms, with AI summaries, trust scores, contribution signals, notifications, and leaderboard momentum built directly in HTML, CSS, JavaScript, and LocalStorage.</p>
+    <div class="feature-cards">
+      <div class="feat-card">
+        <div class="feat-card-title">AI request intelligence</div>
+        <div class="feat-card-desc">Auto-categorization, urgency detection, tags, rewrite suggestions, and trend snapshots.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-card-title">Community trust graph</div>
+        <div class="feat-card-desc">Badges, helper rankings, trust score boosts, and visible contribution history.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-percent">92%</div>
+        <div class="feat-card-desc">Top trust score currently active across the sample mentor network.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CORE FLOW -->
+<div class="section">
+  <div class="section-label">Core Flow</div>
+  <div class="section-header">
+    <div class="section-title">From struggling alone to solving together</div>
+    <button class="btn-outline-sm">Try onboarding AI</button>
+  </div>
+  <div class="core-cards">
+    <div class="core-card">
+      <div class="core-card-title">Ask for help clearly</div>
+      <div class="core-card-desc">Create structured requests with category, urgency, AI suggestions, and tags that attract the right people.</div>
+    </div>
+    <div class="core-card">
+      <div class="core-card-title">Discover the right people</div>
+      <div class="core-card-desc">Use the explore feed, helper lists, notifications, and messaging to move quickly once a match happens.</div>
+    </div>
+    <div class="core-card">
+      <div class="core-card-title">Track real contribution</div>
+      <div class="core-card-desc">Trust scores, badges, solved requests, and rankings help the community recognize meaningful support.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURED REQUESTS -->
+<div class="featured-section">
+  <div class="section-label">Featured Requests</div>
+  <div class="section-header" style="margin-bottom: 22px;">
+    <div class="section-title">Community problems currently in motion</div>
+    <button class="btn-outline-sm">View full feed</button>
+  </div>
+  <div class="request-cards">
+
+    <!-- Card 1 -->
+    <div class="req-card">
+      <div class="req-tags">
+        <span class="tag tag-web">Web Development</span>
+        <span class="tag tag-high">High</span>
+        <span class="tag tag-open">Open</span>
+      </div>
+      <div class="req-title">Need help making my portfolio responsive before demo day</div>
+      <div class="req-desc">My HTML/CSS portfolio breaks on tablets and I need layout guidance before tomorrow evening.</div>
+      <div class="req-footer-tags">
+        <span class="ftag">HTML/CSS</span>
+        <span class="ftag">Responsive</span>
+        <span class="ftag">Portfolio</span>
+      </div>
+      <div class="req-bottom">
+        <div>
+          <div class="req-author">Sara Noor</div>
+          <div class="req-meta">Karachi • 1 helper interested</div>
+        </div>
+        <div class="req-open-btn">Open<br>details</div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="req-card">
+      <div class="req-tags">
+        <span class="tag tag-design">Design</span>
+        <span class="tag tag-medium">Medium</span>
+        <span class="tag tag-open">Open</span>
+      </div>
+      <div class="req-title">Looking for Figma feedback on a volunteer event poster</div>
+      <div class="req-desc">I have a draft poster for a campus community event and want sharper hierarchy, spacing, and CTA copy.</div>
+      <div class="req-footer-tags">
+        <span class="ftag">Figma</span>
+        <span class="ftag">Poster</span>
+        <span class="ftag">DesignReview</span>
+      </div>
+      <div class="req-bottom">
+        <div>
+          <div class="req-author">Ayesha Khan</div>
+          <div class="req-meta">Lahore • 2 helpers interested</div>
+        </div>
+        <div class="req-open-btn">Open<br>details</div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="req-card">
+      <div class="req-tags">
+        <span class="tag tag-career">Career</span>
+        <span class="tag tag-low">Low</span>
+        <span class="tag tag-solved">Solved</span>
+      </div>
+      <div class="req-title">Need mock interview support for internship applications</div>
+      <div class="req-desc">Applying to frontend internships and need someone to practice behavioral and technical interview questions with me.</div>
+      <div class="req-footer-tags">
+        <span class="ftag">Interview Prep</span>
+        <span class="ftag">Career</span>
+        <span class="ftag">Frontend</span>
+      </div>
+      <div class="req-bottom">
+        <div>
+          <div class="req-author">Sara Noor</div>
+          <div class="req-meta">Remote • 2 helpers interested</div>
+        </div>
+        <div class="req-open-btn">Open<br>details</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  HelpHub AI is built as a premium-feel, multi-page community support product using HTML, CSS, JavaScript, and LocalStorage.
+</footer>
+
+</body>
+</html>
