@@ -5,122 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>HelpHub AI - Leaderboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --teal: #1a7a6e; --teal-dark: #15635a;
-    --cream: #f0ede6; --cream2: #e8e4dc;
-    --white: #fff; --dark: #1e3530;
-    --text-dark: #1a2e2a; --text-muted: #6b7b74;
-    --border: rgba(0,0,0,0.09);
-  }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-dark); min-height: 100vh; }
-  body::before {
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-    background:
-      radial-gradient(ellipse at 0% 100%, rgba(100,180,160,0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 100% 0%,  rgba(240,210,150,0.20) 0%, transparent 45%);
-  }
-
-  /* NAV */
-  nav { position:relative; z-index:10; display:flex; align-items:center; padding:14px 40px; background:var(--cream); border-bottom:1px solid var(--border); }
-  .nav-logo { display:flex; align-items:center; gap:10px; font-weight:600; font-size:15px; color:var(--text-dark); text-decoration:none; }
-  .logo-icon { width:34px; height:34px; background:var(--teal); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:15px; }
-  .nav-links { margin-left:auto; display:flex; gap:4px; }
-  .nav-links a { text-decoration:none; color:var(--text-muted); font-size:14px; padding:7px 18px; border-radius:20px; cursor:pointer; transition:all .2s; }
-  .nav-links a:hover { color:var(--text-dark); background:var(--cream2); }
-  .nav-links a.active { background:var(--cream2); color:var(--text-dark); font-weight:500; }
-
-  /* HERO */
-  .hero { background:var(--dark); border-radius:18px; margin:28px 40px 0; padding:44px 52px; position:relative; z-index:1; }
-  .hero-label { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:14px; }
-  .hero-title { font-size:44px; font-weight:800; color:#fff; margin-bottom:12px; letter-spacing:-.5px; line-height:1.1; }
-  .hero-desc  { font-size:14px; color:rgba(255,255,255,0.6); }
-
-  /* MAIN */
-  .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:24px 40px 60px; position:relative; z-index:1; }
-
-  /* CARDS */
-  .card { background:var(--white); border-radius:18px; padding:32px; border:.5px solid var(--border); }
-  .card-label { font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--teal); margin-bottom:12px; }
-  .card-title { font-size:28px; font-weight:700; color:var(--text-dark); margin-bottom:24px; }
-
-  /* RANKINGS */
-  .rank-list { display:flex; flex-direction:column; gap:12px; }
-  .rank-item {
-    background:#faf9f7; border-radius:14px; padding:18px 20px;
-    display:flex; align-items:center; gap:16px;
-    border:.5px solid var(--border); transition:all .2s;
-    animation: fadeIn 0.3s ease both;
-  }
-  .rank-item:hover { border-color:var(--teal); background:#f0faf8; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-  .rank-item:nth-child(2){animation-delay:.06s}
-  .rank-item:nth-child(3){animation-delay:.12s}
-  .rank-item:nth-child(4){animation-delay:.18s}
-  .rank-item:nth-child(5){animation-delay:.24s}
-
-  /* Avatar */
-  .avatar {
-    width:46px; height:46px; border-radius:50%; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center;
-    font-size:15px; font-weight:700; color:#fff;
-  }
-
-  .rank-info { flex:1; min-width:0; }
-  .rank-name { font-size:15px; font-weight:700; color:var(--text-dark); margin-bottom:3px; }
-  .rank-skills { font-size:12.5px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px; }
-
-  .rank-stats { text-align:right; flex-shrink:0; }
-  .rank-trust { font-size:16px; font-weight:700; color:var(--text-dark); }
-  .rank-contribs { font-size:12px; color:var(--text-muted); margin-top:2px; }
-
-  /* #1 highlight */
-  .rank-item.first { border-color:rgba(26,122,110,0.3); background:#f0faf8; }
-  .rank-item.first .rank-name { color:var(--teal); }
-
-  /* Rank number badge */
-  .rank-num {
-    font-size:12px; font-weight:700; color:var(--text-muted);
-    min-width:28px; text-align:center;
-  }
-  .rank-item.first .rank-num { color:var(--teal); font-size:13px; }
-
-  /* BADGE SYSTEM */
-  .badge-list { display:flex; flex-direction:column; gap:14px; }
-  .badge-item {
-    background:#faf9f7; border-radius:14px; padding:20px 22px;
-    border:.5px solid var(--border);
-    animation: fadeIn 0.3s ease both;
-  }
-  .badge-item:nth-child(2){animation-delay:.08s}
-  .badge-item:nth-child(3){animation-delay:.16s}
-
-  .badge-name { font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:5px; }
-  .badge-tags { font-size:13px; color:var(--text-muted); margin-bottom:14px; }
-
-  /* Trust bar */
-  .trust-bar-wrap { height:8px; background:var(--cream2); border-radius:4px; overflow:hidden; }
-  .trust-bar {
-    height:100%; border-radius:4px;
-    background: linear-gradient(90deg, #e8a020 0%, #1a7a6e 100%);
-    transition: width 1s cubic-bezier(.4,0,.2,1);
-  }
-
-  /* Skeleton */
-  .skel { background:var(--cream2); border-radius:8px; animation:shimmer 1.2s ease-in-out infinite; }
-  @keyframes shimmer{0%,100%{opacity:1}50%{opacity:.45}}
-  .skel-item { background:#faf9f7; border-radius:14px; padding:18px 20px; border:.5px solid var(--border); display:flex; gap:14px; align-items:center; }
-
-  /* Empty */
-  .empty { text-align:center; padding:40px 20px; color:var(--text-muted); font-size:14px; }
-
-  @media(max-width:860px) {
-    .main-grid { grid-template-columns:1fr; margin:16px; }
-    .hero { margin:16px; padding:28px 22px; }
-    .hero-title { font-size:30px; }
-  }
-</style>
+<link rel="stylesheet" href="css/leader.css">
 </head>
 <body>
 
@@ -228,7 +113,7 @@
     const list = document.getElementById("rankList");
 
     if (!users.length) {
-      list.innerHTML = `<div class="empty">Abhi koi user nahi.</div>`;
+      list.innerHTML = `<div class="empty">No users found.</div>`;
       return;
     }
 
@@ -289,23 +174,15 @@
     });
   }
 
-  // ── Fetch users + requests for real contributions ─────────────
   async function fetchLeaderboard() {
     try {
-      // Users fetch
       const usersRes = await fetch(`/api/messages/users?excludeId=none`);
       const allUsers = await usersRes.json();
 
-      // Requests fetch — contributions count karne ke liye
       const reqRes  = await fetch("/api/requests");
       const requests = await reqRes.json();
 
-      // Include current user bhi
       const meRes  = await fetch(`/api/messages/users?excludeId=__none__`);
-
-      // Contributions: har user kitni requests pe help offer ki
-      // (helpersInterested se estimate — real data ke liye extend kar sakte ho)
-      // For now: requests posted by user = contribution
       const contribMap = {};
       requests.forEach(r => {
         const name = r.author?.name;

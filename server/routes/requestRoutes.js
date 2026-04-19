@@ -27,9 +27,9 @@ router.post("/", async (req, res) => {
     const { title, description, tags, category, urgency, author } = req.body;
 
     if (!title || !description)
-      return res.status(400).json({ message: "Title aur description zaruri hain." });
+      return res.status(400).json({ message: "Title and description are required." });
     if (!author?.id || !author?.name)
-      return res.status(401).json({ message: "Login karein pehle." });
+      return res.status(401).json({ message: "Please login first." });
 
     const tagsArray = typeof tags === "string"
       ? tags.split(",").map(t => t.trim()).filter(Boolean)
@@ -41,7 +41,7 @@ router.post("/", async (req, res) => {
       author: { id: author.id, name: author.name, city: author.city || "Pakistan" },
     });
 
-    console.log("✅ Request created:", request._id);
+    console.log("Request created:", request._id);
 
     // ── Notifications ─────────────────────────────────────────
     // author.id ko safely ObjectId mein convert karo
@@ -49,14 +49,14 @@ router.post("/", async (req, res) => {
     try {
       authorObjectId = new mongoose.Types.ObjectId(author.id);
     } catch(e) {
-      console.error("❌ Invalid author.id for ObjectId:", author.id);
+      console.error("Invalid author.id for ObjectId:", author.id);
       // Request ban gayi — notification fail pe return mat karo
-      return res.status(201).json({ message: "Request publish ho gayi!", request });
+      return res.status(201).json({ message: "Request published successfully!", request });
     }
 
     // Saare users except author
     const allUsers = await User.find({ _id: { $ne: authorObjectId } }).select("_id");
-    console.log(`📢 Notifying ${allUsers.length} users`);
+    console.log(`Notifying ${allUsers.length} users`);
 
     if (allUsers.length > 0) {
       const notifText = `${author.name} posted a new ${category} request: "${title.slice(0, 60)}${title.length > 60 ? "..." : ""}"`;
@@ -72,12 +72,12 @@ router.post("/", async (req, res) => {
       }));
 
       await Notification.insertMany(notifDocs);
-      console.log(`✅ ${notifDocs.length} notifications created`);
+      console.log(`${notifDocs.length} notifications created`);
     }
 
-    return res.status(201).json({ message: "Request publish ho gayi!", request });
+    return res.status(201).json({ message: "Request published successfully!", request });
   } catch (err) {
-    console.error("❌ Create request error:", err.message);
+    console.error("Create request error:", err.message);
     return res.status(500).json({ message: "Server error: " + err.message });
   }
 });
@@ -86,14 +86,14 @@ router.post("/", async (req, res) => {
 router.post("/:id/help", async (req, res) => {
   try {
     const request = await Request.findById(req.params.id);
-    if (!request) return res.status(404).json({ message: "Request nahi mili." });
+    if (!request) return res.status(404).json({ message: "Request not found." });
     if (request.status === "Solved")
-      return res.status(400).json({ message: "Ye request already solved hai." });
+      return res.status(400).json({ message: "This request is already solved." });
 
     const { helperId, helperName } = req.body;
 
     if (String(request.author.id) === String(helperId))
-      return res.status(400).json({ message: "Apni request pe help offer nahi kar sakte." });
+      return res.status(400).json({ message: "You cannot offer help on your own request." });
 
     request.helpersInterested = (request.helpersInterested || 0) + 1;
     await request.save();
@@ -104,7 +104,7 @@ router.post("/:id/help", async (req, res) => {
       "Match", "/explore"
     );
 
-    return res.json({ message: "Help offer submit ho gayi!", helpersInterested: request.helpersInterested });
+    return res.json({ message: "Help offer submitted successfully!", helpersInterested: request.helpersInterested });
   } catch (err) {
     return res.status(500).json({ message: "Server error: " + err.message });
   }
@@ -114,13 +114,13 @@ router.post("/:id/help", async (req, res) => {
 router.patch("/:id/solve", async (req, res) => {
   try {
     const request = await Request.findById(req.params.id);
-    if (!request) return res.status(404).json({ message: "Request nahi mili." });
+    if (!request) return res.status(404).json({ message: "Request not found." });
     if (request.status === "Solved")
-      return res.status(400).json({ message: "Ye pehle se solved hai." });
+      return res.status(400).json({ message: "This request is already solved." });
 
     const { userId } = req.body;
     if (String(request.author.id) !== String(userId))
-      return res.status(403).json({ message: "Sirf apni request solved mark kar sakte ho." });
+      return res.status(403).json({ message: "You can only mark your own request as solved." });
 
     request.status = "Solved";
     await request.save();
@@ -131,7 +131,7 @@ router.patch("/:id/solve", async (req, res) => {
       "Status", "/explore"
     );
 
-    return res.json({ message: "Request solved mark ho gayi!", request });
+    return res.json({ message: "Request solved successfully!", request });
   } catch (err) {
     return res.status(500).json({ message: "Server error: " + err.message });
   }

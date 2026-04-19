@@ -139,7 +139,7 @@ if (existingUser) {
       return showAlert("All fields are required.", "error");
     }
     if (password.length < 6) {
-      return showAlert("Password must be at least 6 characters long.", "error");
+      return showAlert("Password must be atleast 6 characters long.", "error");
     }
 
     setLoading("registerBtn", "reg-spinner", "reg-btn-text", true);
@@ -162,7 +162,7 @@ if (existingUser) {
         showAlert("" + data.message, "error");
       }
     } catch (err) {
-      showAlert("Network error. Server check karein.", "error");
+      showAlert("Network error. Server is down.", "error");
     } finally {
       setLoading("registerBtn", "reg-spinner", "reg-btn-text", false);
     }
@@ -174,7 +174,7 @@ if (existingUser) {
     const password = document.getElementById("login-password").value;
 
     if (!email || !password) {
-      return showAlert("Email aur password daalein.", "error");
+      return showAlert("Please enter email and password.", "error");
     }
 
     setLoading("loginBtn", "login-spinner", "login-btn-text", true);
@@ -196,7 +196,7 @@ if (existingUser) {
         showAlert(" " + data.message, "error");
       }
     } catch (err) {
-      showAlert(" Network error. Server check karein.", "error");
+      showAlert(" Network error. Server is down.", "error");
     } finally {
       setLoading("loginBtn", "login-spinner", "login-btn-text", false);
     }

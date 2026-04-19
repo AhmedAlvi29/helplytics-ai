@@ -40,7 +40,6 @@ router.get("/conversation", async (req, res) => {
   } catch (err) { return res.status(500).json({ message: "Server error." }); }
 });
 
-// GET /api/messages/users
 router.get("/users", async (req, res) => {
   try {
     const { excludeId } = req.query;
@@ -50,16 +49,15 @@ router.get("/users", async (req, res) => {
   } catch (err) { return res.status(500).json({ message: "Server error." }); }
 });
 
-// POST /api/messages
 router.post("/", async (req, res) => {
   try {
     const { fromId, fromName, toId, toName, message } = req.body;
     if (!fromId || !fromName || !toId || !toName || !message)
-      return res.status(400).json({ message: "Tamam fields zaruri hain." });
+      return res.status(400).json({ message: "All fields are required." });
     if (!message.trim())
-      return res.status(400).json({ message: "Message khali nahi ho sakta." });
+      return res.status(400).json({ message: "Message cannot be empty." });
     if (fromId === toId)
-      return res.status(400).json({ message: "Apne aap ko message nahi kar sakte." });
+      return res.status(400).json({ message: "You cannot message yourself." });
 
     const msg = await Message.create({
       from: { id: fromId, name: fromName },
@@ -67,15 +65,14 @@ router.post("/", async (req, res) => {
       message: message.trim(),
     });
 
-    // ✅ Receiver ko notification bhejo
     await createNotif(
       toId,
-      `${fromName} ne aapko message kiya: "${message.trim().slice(0,60)}${message.length>60?"...":""}"`,
+      `${fromName} sent a message: "${message.trim().slice(0,60)}${message.length>60?"...":""}"`,
       "Message",
       "/messages"
     );
 
-    return res.status(201).json({ message: "Message bhej diya!", data: msg });
+    return res.status(201).json({ message: "Message sent successfully!", data: msg });
   } catch (err) { return res.status(500).json({ message: "Server error: " + err.message }); }
 });
 

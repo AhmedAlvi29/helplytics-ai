@@ -219,8 +219,8 @@
       card.innerHTML = `
         <div class="empty">
           <div class="empty-icon">🔔</div>
-          <h3>Koi notification nahi</h3>
-          <p>Jab koi aapko match kare ya message kare — yahan dikhega.</p>
+          <h3>No notifications</h3>
+          <p>When someone matches or messages you — you'll see it here.</p>
         </div>`;
       return;
     }
@@ -252,7 +252,6 @@
   async function markRead(id, el) {
     const notif = notifications.find(n => n._id === id);
     if (!notif || notif.read) {
-      // Already read — agar link ho to navigate
       if (notif?.link) window.location.href = notif.link;
       return;
     }
@@ -279,7 +278,7 @@
   // ── Mark all read ────────────────────────────────────────────
   async function markAllRead() {
     const unread = notifications.filter(n => !n.read);
-    if (!unread.length) { showToast("Sab pehle se read hain!"); return; }
+    if (!unread.length) { showToast("All notifications read"); return; }
 
     try {
       const res = await fetch("/api/notifications/read-all", {
@@ -290,14 +289,14 @@
       if (res.ok) {
         notifications.forEach(n => n.read = true);
         render(notifications);
-        showToast("✅ Sab notifications read mark ho gayi!");
+        showToast("All notifications read");
       }
     } catch(err) { console.error("Mark all:", err); }
   }
 
   // ── Init + polling ───────────────────────────────────────────
   fetchNotifications();
-  setInterval(fetchNotifications, 15000); // har 15s refresh
+  setInterval(fetchNotifications, 15000);
 </script>
 </body>
 </html>

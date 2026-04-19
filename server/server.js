@@ -8,7 +8,7 @@ const authRoutes         = require("./routes/authRoutes");
 const requestRoutes      = require("./routes/requestRoutes");
 const profileRoutes      = require("./routes/profileRoutes");
 const messageRoutes      = require("./routes/messageRoutes");
-const notificationRoutes = require("./routes/notificationRoutes"); // 👈 NEW
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express();
 app.use(express.json());
@@ -19,13 +19,13 @@ app.use("/api/auth",          authRoutes);
 app.use("/api/requests",      requestRoutes);
 app.use("/api/profile",       profileRoutes);
 app.use("/api/messages",      messageRoutes);
-app.use("/api/notifications", notificationRoutes); // 👈 NEW
+app.use("/api/notifications", notificationRoutes);
 
 app.use("/", pageRoutes);
 
-app.listen(5000, () => console.log("Server running on port 5000 🚀"));
+app.listen(5000, () => console.log("Server running on port 5000"));
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected ✅"))
+  .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));

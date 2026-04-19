@@ -2,7 +2,6 @@ const express      = require("express");
 const router       = express.Router();
 const Notification = require("../models/Notification");
 
-// ── GET /api/notifications?userId=xxx ────────────────────────
 router.get("/", async (req, res) => {
   try {
     const { userId } = req.query;
@@ -27,7 +26,7 @@ router.patch("/:id/read", async (req, res) => {
       { read: true },
       { new: true }
     );
-    if (!notif) return res.status(404).json({ message: "Notification nahi mili." });
+    if (!notif) return res.status(404).json({ message: "Notification not found." });
     return res.json(notif);
   } catch (err) {
     console.error("Mark read:", err.message);
@@ -35,25 +34,23 @@ router.patch("/:id/read", async (req, res) => {
   }
 });
 
-// ── PATCH /api/notifications/read-all — sab read ─────────────
 router.patch("/read-all", async (req, res) => {
   try {
     const { userId } = req.body;
     if (!userId) return res.status(400).json({ message: "userId required." });
 
     await Notification.updateMany({ userId, read: false }, { $set: { read: true } });
-    return res.json({ message: "Sab notifications read mark ho gayi." });
+    return res.json({ message: "All notifications marked as read." });
   } catch (err) {
     console.error("Read all:", err.message);
     return res.status(500).json({ message: "Server error." });
   }
 });
 
-// ── POST /api/notifications — create (internal use) ──────────
 router.post("/", async (req, res) => {
   try {
     const { userId, text, type, link } = req.body;
-    if (!userId || !text) return res.status(400).json({ message: "userId aur text zaruri." });
+    if (!userId || !text) return res.status(400).json({ message: "userId and text are required." });
 
     const notif = await Notification.create({ userId, text, type: type||"Match", link: link||"" });
     return res.status(201).json(notif);

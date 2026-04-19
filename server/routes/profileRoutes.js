@@ -10,14 +10,14 @@ function protect(req, res, next) {
     const token  = header.startsWith("Bearer ") ? header.slice(7) : null;
 
     if (!token) {
-      return res.status(401).json({ message: "Token nahi mila. Login karein." });
+      return res.status(401).json({ message: "Token not found. Please login." });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = { id: decoded.id };
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Token invalid ya expire ho gaya." });
+    return res.status(401).json({ message: "Token invalid or expired." });
   }
 }
 
@@ -27,7 +27,7 @@ router.get("/", protect, async (req, res) => {
       "name email role city skills interests badges trustScore contributions"
     );
 
-    if (!user) return res.status(404).json({ message: "User nahi mila." });
+    if (!user) return res.status(404).json({ message: "User not found." });
 
     res.json(user);
   } catch (err) {

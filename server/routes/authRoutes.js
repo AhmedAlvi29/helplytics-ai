@@ -99,15 +99,15 @@ router.post("/register", async (req, res) => {
     const { name, email, password, role } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email aur password zaruri hain." });
+      return res.status(400).json({ message: "Name, email and password are required." });
     }
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password kam az kam 6 characters ka hona chahiye." });
+      return res.status(400).json({ message: "Password must be atleast 6 characters long." });
     }
 
     const existing = await User.findOne({ email });
     if (existing) {
-      return res.status(409).json({ message: "Ye email pehle se registered hai." });
+      return res.status(409).json({ message: "This email is already registered." });
     }
 
     const hashed = await bcrypt.hash(password, 12);
@@ -127,11 +127,11 @@ router.post("/register", async (req, res) => {
     await sendVerificationEmail(email, name, verifyToken);
 
     return res.status(201).json({
-      message: "Account ban gaya! Apni email check karein — verification link bheja gaya hai.",
+      message: "Account created successfully! Please check your email for verification link.",
     });
   } catch (err) {
     console.error("Register error:", err);
-    return res.status(500).json({ message: "Server error. Dobara koshish karein." });
+    return res.status(500).json({ message: "Server error. Please try again." });
   }
 });
 
@@ -149,8 +149,8 @@ router.get("/verify-email", async (req, res) => {
     if (!user) {
       return res.status(400).send(`
         <html><body style="font-family:sans-serif;text-align:center;padding:60px;background:#f5f0e8;">
-          <h2 style="color:#c0000a;">Link invalid ya expire ho gaya hai.</h2>
-          <p>Dobara register karein ya login page par jayein.</p>
+          <h2 style="color:#c0000a;">Link invalid or expired.</h2>
+          <p>Please register again or go to login page.</p>
           <a href="/auth" style="color:#1a7a6e;">← Auth Page</a>
         </body></html>
       `);

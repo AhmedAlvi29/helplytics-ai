@@ -5,139 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>HelpHub AI - Request Detail</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --teal: #1a7a6e; --teal-dark: #15635a;
-    --cream: #f0ede6; --cream2: #e8e4dc;
-    --white: #fff; --dark: #1e3530;
-    --text-dark: #1a2e2a; --text-muted: #6b7b74;
-    --border: rgba(0,0,0,0.09);
-  }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-dark); min-height: 100vh; }
-  body::before {
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-    background:
-      radial-gradient(ellipse at 0% 100%, rgba(100,180,160,0.14) 0%, transparent 50%),
-      radial-gradient(ellipse at 100% 0%, rgba(240,210,150,0.18) 0%, transparent 45%);
-  }
-
-  /* NAV */
-  nav { position:relative; z-index:10; display:flex; align-items:center; padding:14px 40px; background:var(--cream); border-bottom:1px solid var(--border); }
-  .nav-logo { display:flex; align-items:center; gap:10px; font-weight:600; font-size:15px; color:var(--text-dark); text-decoration:none; }
-  .logo-icon { width:34px; height:34px; background:var(--teal); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:15px; }
-  .nav-links { margin-left:auto; display:flex; gap:4px; }
-  .nav-links a { text-decoration:none; color:var(--text-muted); font-size:14px; padding:7px 18px; border-radius:20px; cursor:pointer; transition:all .2s; }
-  .nav-links a:hover { color:var(--text-dark); background:var(--cream2); }
-
-  /* HERO */
-  .hero { background:var(--dark); border-radius:18px; margin:28px 40px 0; padding:44px 52px; position:relative; z-index:1; }
-  .hero-label { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:16px; }
-  .hero-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
-  .hero-title { font-size:48px; font-weight:800; color:#fff; line-height:1.1; margin-bottom:16px; letter-spacing:-.5px; }
-  .hero-desc  { font-size:15px; color:rgba(255,255,255,0.65); line-height:1.65; max-width:700px; }
-
-  /* tag colors */
-  .tag { font-size:11.5px; font-weight:600; padding:5px 14px; border-radius:14px; }
-  .tag-Web-Development { background:rgba(212,240,228,0.2); color:#6ee8bc; border:1px solid rgba(110,232,188,0.3); }
-  .tag-Design   { background:rgba(220,230,255,0.2); color:#a0b4ff; border:1px solid rgba(160,180,255,0.3); }
-  .tag-Career   { background:rgba(255,240,212,0.2); color:#ffd080; border:1px solid rgba(255,208,128,0.3); }
-  .tag-High     { background:rgba(255,80,80,0.2); color:#ff8080; border:1px solid rgba(255,80,80,0.35); }
-  .tag-Medium   { background:rgba(255,200,80,0.2); color:#ffc840; border:1px solid rgba(255,200,80,0.3); }
-  .tag-Low      { background:rgba(100,220,160,0.2); color:#64dc9c; border:1px solid rgba(100,220,160,0.3); }
-  .tag-Open     { background:rgba(200,200,200,0.15); color:#c8c8c8; border:1px solid rgba(200,200,200,0.25); }
-  .tag-Solved   { background:rgba(100,220,160,0.2); color:#64dc9c; border:1px solid rgba(100,220,160,0.3); }
-  .tag-AIML,.tag-Mobile,.tag-Education,.tag-Other { background:rgba(200,200,200,0.15); color:#c8c8c8; border:1px solid rgba(200,200,200,0.25); }
-
-  /* Light tags (for cards) */
-  .ltag { font-size:12px; font-weight:500; padding:5px 14px; border-radius:14px; background:var(--cream); color:var(--text-dark); border:1px solid var(--border); }
-
-  /* MAIN GRID */
-  .main-grid { display:grid; grid-template-columns:1fr 360px; gap:20px; margin:24px 40px 60px; position:relative; z-index:1; }
-
-  /* CARDS */
-  .card { background:var(--white); border-radius:18px; padding:30px; border:.5px solid var(--border); margin-bottom:16px; }
-  .card:last-child { margin-bottom:0; }
-  .card-label { font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--teal); margin-bottom:12px; }
-  .card-title { font-size:22px; font-weight:700; color:var(--text-dark); margin-bottom:14px; }
-
-  /* AI Summary */
-  .ai-desc { font-size:14px; color:var(--text-muted); line-height:1.75; margin-bottom:18px; }
-  .ai-tags { display:flex; flex-wrap:wrap; gap:8px; }
-
-  /* Actions */
-  .actions-row { display:flex; gap:12px; flex-wrap:wrap; }
-  .btn-help {
-    padding:12px 28px; background:var(--teal); color:#fff;
-    border:none; border-radius:30px; font-size:14.5px; font-weight:700;
-    cursor:pointer; font-family:'DM Sans',sans-serif; transition:background .2s;
-    display:flex; align-items:center; gap:8px;
-  }
-  .btn-help:hover { background:var(--teal-dark); }
-  .btn-help:disabled { opacity:.55; cursor:not-allowed; }
-  .btn-help.done { background:#2db88a; pointer-events:none; }
-
-  .btn-solved {
-    padding:12px 28px; background:transparent; color:var(--text-dark);
-    border:2px solid rgba(0,0,0,0.14); border-radius:30px;
-    font-size:14.5px; font-weight:700; cursor:pointer;
-    font-family:'DM Sans',sans-serif; transition:all .2s;
-  }
-  .btn-solved:hover { background:#e8f7f0; border-color:var(--teal); color:var(--teal); }
-  .btn-solved:disabled { opacity:.55; cursor:not-allowed; }
-  .btn-solved.done { background:#e8f7f0; border-color:var(--teal); color:var(--teal); pointer-events:none; }
-
-  /* Requester card */
-  .requester-row { display:flex; align-items:center; gap:16px; }
-  .avatar {
-    width:48px; height:48px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-size:16px; font-weight:700; color:#fff; flex-shrink:0;
-  }
-  .requester-name { font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:4px; }
-  .requester-meta { font-size:13px; color:var(--text-muted); }
-
-  /* Helpers card */
-  .helpers-list { display:flex; flex-direction:column; gap:14px; }
-  .helper-row { display:flex; align-items:center; gap:14px; }
-  .helper-info { flex:1; }
-  .helper-name { font-size:14.5px; font-weight:700; color:var(--text-dark); margin-bottom:3px; }
-  .helper-skills { font-size:12.5px; color:var(--text-muted); }
-  .trust-badge {
-    background:var(--cream); color:var(--text-dark); font-size:12px; font-weight:600;
-    padding:5px 13px; border-radius:12px; border:.5px solid var(--border); white-space:nowrap;
-  }
-  .no-helpers { text-align:center; padding:20px; color:var(--text-muted); font-size:13.5px; }
-
-  /* Back btn */
-  .back-btn {
-    display:inline-flex; align-items:center; gap:6px;
-    color:var(--text-muted); font-size:13.5px; font-weight:500;
-    cursor:pointer; margin:20px 40px 0; position:relative; z-index:1;
-    background:none; border:none; font-family:'DM Sans',sans-serif;
-    transition:color .2s;
-  }
-  .back-btn:hover { color:var(--text-dark); }
-
-  /* Spinner */
-  .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; display:none; }
-  @keyframes spin{to{transform:rotate(360deg)}}
-
-  /* Toast */
-  .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--dark); color:#fff; padding:13px 24px; border-radius:30px; font-size:14px; font-weight:500; z-index:9999; transition:transform .35s cubic-bezier(.34,1.3,.64,1); white-space:nowrap; pointer-events:none; }
-  .toast.show { transform:translateX(-50%) translateY(0); }
-
-  /* Skeleton */
-  .skel { background:var(--cream2); border-radius:8px; animation:shimmer 1.2s ease-in-out infinite; }
-  @keyframes shimmer{0%,100%{opacity:1}50%{opacity:.45}}
-
-  @media(max-width:860px) {
-    .hero { margin:16px; padding:28px 22px; }
-    .hero-title { font-size:30px; }
-    .main-grid { grid-template-columns:1fr; margin:16px; }
-    .back-btn { margin:16px 16px 0; }
-  }
-</style>
+<link rel="stylesheet" href="css/detal.css">
 </head>
 <body>
 
@@ -221,7 +89,7 @@
       <div class="card-label">Helpers</div>
       <div class="card-title">People ready to support</div>
       <div class="helpers-list" id="helpersList">
-        <div class="no-helpers">Koi helper abhi nahi — pehle aap bano!</div>
+        <div class="no-helpers">No helpers yet — be the first!</div>
       </div>
     </div>
 
@@ -321,18 +189,16 @@
 
   function renderHelpers(r) {
     const list = document.getElementById("helpersList");
-    // helpers stored in request (extend later with real helper profiles)
     const count = r.helpersInterested || 0;
     if (!count) {
       list.innerHTML = `<div class="no-helpers">Koi helper abhi nahi — pehle aap bano!</div>`;
       return;
     }
-    // Show count since we don't store helper names in basic model
     list.innerHTML = `
       <div style="font-size:14px;color:var(--text-muted);padding:8px 0">
         <strong style="color:var(--text-dark);font-size:18px">${count}</strong> 
         ${count === 1 ? "person" : "people"} interested in helping.
-        <br><span style="font-size:13px">Help karein aur yahan dikho!</span>
+        <br><span style="font-size:13px">Help and show up here!</span>
       </div>`;
   }
 
@@ -340,14 +206,12 @@
     const btnHelp   = document.getElementById("btnHelp");
     const btnSolved = document.getElementById("btnSolved");
 
-    // Solved state
     if (r.status === "Solved") {
       btnSolved.classList.add("done");
       document.getElementById("solve-text").textContent = "Already Solved";
       btnHelp.disabled = true;
     }
 
-    // Apni request
     if (r.author?.name === user.name || String(r.author?.id) === String(user.id)) {
       btnHelp.disabled = true;
       document.getElementById("help-text").textContent = "Your own request";
@@ -357,12 +221,11 @@
   // ── Fetch request ─────────────────────────────────────────────
   async function fetchRequest() {
     try {
-      // Saari requests fetch karke ID se dhundho
       const res  = await fetch("/api/requests");
       const data = await res.json();
       const req  = data.find(r => r._id === requestId);
       if (!req) {
-        document.getElementById("heroTitle").textContent = "Request nahi mili.";
+        document.getElementById("heroTitle").textContent = "Request not found.";
         return;
       }
       renderPage(req);
@@ -394,14 +257,14 @@
         txt.textContent = "Help offered!"; txt.style.opacity = "1"; spin.style.display = "none";
         currentReq.helpersInterested = (currentReq.helpersInterested||0)+1;
         renderHelpers(currentReq);
-        showToast("🙌 Help offer submit ho gayi!");
+        showToast("Help offer submitted!");
       } else {
         btn.disabled = false; txt.style.opacity = "1"; spin.style.display = "none";
-        showToast("❌ " + (data.message||"Error hua."));
+        showToast( (data.message||"Error."));
       }
     } catch(err) {
       btn.disabled = false; txt.style.opacity = "1"; spin.style.display = "none";
-      showToast("❌ Network error.");
+      showToast(" Network error.");
     }
   }
 
@@ -410,7 +273,7 @@
     if (!currentReq) return;
 
     if (currentReq.author?.name !== user.name && String(currentReq.author?.id) !== String(user.id)) {
-      showToast("⚠️ Sirf apni request solved mark kar sakte ho.");
+      showToast("Only you can mark your request as solved.");
       return;
     }
 
@@ -436,14 +299,14 @@
             `<span class="tag ${tagCls(v)}">${esc(v)}</span>`
           ).join("");
         document.getElementById("btnHelp").disabled = true;
-        showToast("🎉 Request solved mark ho gayi!");
+        showToast("Request solved!");
       } else {
         btn.disabled = false; txt.style.opacity = "1"; spin.style.display = "none";
-        showToast("❌ " + (data.message||"Error hua."));
+        showToast((data.message||"Error."));
       }
     } catch(err) {
       btn.disabled = false; txt.style.opacity = "1"; spin.style.display = "none";
-      showToast("❌ Network error.");
+      showToast("Network error.");
     }
   }
 </script>
