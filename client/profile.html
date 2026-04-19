@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HelpHub AI - Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/profile.css">
+</head>
+<body>
+
+<nav>
+  <a href="/dashboard" class="nav-logo">
+    <div class="logo-icon">H</div>
+    HelpHub AI
+  </a>
+  <div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
+    <a href="#">Onboarding</a>
+    <a href="/profile" class="active">Profile</a>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Profile</div>
+  <div class="hero-name" id="heroName">Loading...</div>
+  <div class="hero-meta" id="heroMeta">—</div>
+</div>
+
+<div class="main-grid">
+
+  <div class="card">
+    <div class="card-label">Public Profile</div>
+    <div class="card-title">Skills and reputation</div>
+
+    <div class="profile-row">
+      <span class="profile-row-key">Trust score</span>
+      <span class="profile-row-val" id="trustScore">—</span>
+    </div>
+    <div class="profile-row">
+      <span class="profile-row-key">Contributions</span>
+      <span class="profile-row-val" id="contributions">—</span>
+    </div>
+
+    <div class="skills-section">
+      <div class="skills-label">Skills</div>
+      <div class="chips" id="skillChips">
+        <span class="chip chip-muted">Skills add karein</span>
+      </div>
+      <div class="skills-label">Badges</div>
+      <div class="chips" id="badgeChips">
+        <span class="chip chip-muted">Loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Edit Profile</div>
+    <div class="card-title">Update your identity</div>
+
+    <div class="alert" id="alertBox"></div>
+
+    <div class="form-row-2">
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input type="text" class="form-input" id="fname" placeholder="Ayesha Khan"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location</label>
+        <input type="text" class="form-input" id="flocation" placeholder="Karachi"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Skills <span style="color:var(--text-muted);font-weight:400">(comma separated)</span></label>
+      <input type="text" class="form-input" id="fskills" placeholder="Figma, UI/UX, HTML/CSS, Career Guidance"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Interests <span style="color:var(--text-muted);font-weight:400">(comma separated)</span></label>
+      <input type="text" class="form-input" id="finterests" placeholder="Hackathons, UI/UX, Community Building"/>
+    </div>
+
+    <button class="btn-save" id="saveBtn" onclick="saveProfile()">
+      <span id="save-text">Save profile</span>
+      <div class="spinner" id="save-spinner"></div>
+    </button>
+  </div>
+
+</div>
+
+<script>
+  const session = JSON.parse(localStorage.getItem("helphub_user") || "null");
+  if (!session) window.location.href = "/auth";
+
+  const token = session?.token || "";
+
+  function authHeaders() {
+    return { "Content-Type": "application/json", "Authorization": "Bearer " + token };
+  }
+
+  function renderProfile(u) {
+    document.getElementById("heroName").textContent = u.name || "—";
+    document.getElementById("heroMeta").textContent =
+      `${u.role || "Both"} • ${u.city || "Pakistan"}`;
+
+    document.getElementById("trustScore").textContent    = (u.trustScore ?? 92) + "%";
+    document.getElementById("contributions").textContent = u.contributions ?? 31;
+
+    // Skills chips
+    const skills = Array.isArray(u.skills) ? u.skills : [];
+    document.getElementById("skillChips").innerHTML = skills.length
+      ? skills.map(s => `<span class="chip">${esc(s)}</span>`).join("")
+      : `<span class="chip chip-muted">No skills yet</span>`;
+
+    // Badge chips
+    const badges = Array.isArray(u.badges) ? u.badges : [];
+    document.getElementById("badgeChips").innerHTML = badges.length
+      ? badges.map(b => `<span class="chip">${esc(b)}</span>`).join("")
+      : `<span class="chip chip-muted">No badges yet</span>`;
+
+    // Form prefill
+    document.getElementById("fname").value      = u.name      || "";
+    document.getElementById("flocation").value  = u.city      || "";
+    document.getElementById("fskills").value    = skills.join(", ");
+    document.getElementById("finterests").value = Array.isArray(u.interests)
+      ? u.interests.join(", ") : "";
+  }
+
+  async function fetchProfile() {
+    try {
+      const res  = await fetch("/api/profile", { headers: authHeaders() });
+      const data = await res.json();
+      if (!res.ok) {
+        console.error("Profile fetch error:", data.message);
+        renderProfile(session);
+        return;
+      }
+      renderProfile(data);
+    } catch (err) {
+      console.error("Network error:", err);
+      renderProfile(session); 
+    }
+  }
+
+  fetchProfile();
+
+  async function saveProfile() {
+    const name      = document.getElementById("fname").value.trim();
+    const city      = document.getElementById("flocation").value.trim();
+    const skills    = document.getElementById("fskills").value.trim();
+    const interests = document.getElementById("finterests").value.trim();
+
+    if (!name) return showAlert("Name is required.", "error");
+
+    setLoading(true);
+    showAlert("", "");
+
+    try {
+      const res  = await fetch("/api/profile", {
+        method:  "PUT",
+        headers: authHeaders(),
+        body:    JSON.stringify({ name, city, skills, interests }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) return showAlert(" " + data.message, "error");
+
+      session.name = data.name;
+      localStorage.setItem("helphub_user", JSON.stringify(session));
+
+      renderProfile(data);
+      showAlert(" Profile save!", "success");
+    } catch (err) {
+      showAlert(" Network error.", "error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ── Logout ───────────────────────────────────────────────────
+  function logout() {
+    localStorage.removeItem("helphub_user");
+    window.location.href = "/auth";
+  }
+
+  function setLoading(on) {
+    document.getElementById("saveBtn").disabled            = on;
+    document.getElementById("save-spinner").style.display = on ? "block" : "none";
+    document.getElementById("save-text").style.opacity    = on ? "0"     : "1";
+  }
+
+  function showAlert(msg, type) {
+    const box = document.getElementById("alertBox");
+    box.className = "alert";
+    box.textContent = msg;
+    if (msg) box.classList.add(type);
+  }
+
+  function esc(str) {
+    return String(str || "")
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+</script>
+</body>
+</html>

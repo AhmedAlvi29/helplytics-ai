@@ -136,10 +136,10 @@ if (existingUser) {
     const role     = document.getElementById("reg-role").value;
 
     if (!name || !email || !password) {
-      return showAlert("Tamam fields bhari honi chahiye.", "error");
+      return showAlert("All fields are required.", "error");
     }
     if (password.length < 6) {
-      return showAlert("Password kam az kam 6 characters ka hona chahiye.", "error");
+      return showAlert("Password must be at least 6 characters long.", "error");
     }
 
     setLoading("registerBtn", "reg-spinner", "reg-btn-text", true);
@@ -154,15 +154,15 @@ if (existingUser) {
       const data = await res.json();
 
       if (res.ok) {
-        showAlert("✅ " + data.message, "success");
+        showAlert("" + data.message, "success");
         document.getElementById("reg-name").value = "";
         document.getElementById("reg-email").value = "";
         document.getElementById("reg-password").value = "";
       } else {
-        showAlert("❌ " + data.message, "error");
+        showAlert("" + data.message, "error");
       }
     } catch (err) {
-      showAlert("❌ Network error. Server check karein.", "error");
+      showAlert("Network error. Server check karein.", "error");
     } finally {
       setLoading("registerBtn", "reg-spinner", "reg-btn-text", false);
     }
@@ -189,14 +189,14 @@ if (existingUser) {
       const data = await res.json();
 
       if (res.ok) {
-        showAlert("✅ Login successful! Redirect ho raha hai...", "success");
+        showAlert("Login successful! Redirect...", "success");
         localStorage.setItem("helphub_user", JSON.stringify(data.user));
         setTimeout(() => { window.location.href = "/dashboard"; }, 1200);
       } else {
-        showAlert("❌ " + data.message, "error");
+        showAlert(" " + data.message, "error");
       }
     } catch (err) {
-      showAlert("❌ Network error. Server check karein.", "error");
+      showAlert(" Network error. Server check karein.", "error");
     } finally {
       setLoading("loginBtn", "login-spinner", "login-btn-text", false);
     }

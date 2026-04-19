@@ -126,7 +126,6 @@
     const desc  = document.getElementById("description").value.toLowerCase();
     const text  = title + " " + desc;
 
-    // Category
     let detectedCat = "Other";
     for (const [cat, words] of Object.entries(categoryMap)) {
       if (words.some(w => text.includes(w))) {
@@ -137,26 +136,22 @@
       }
     }
 
-    // Urgency
     let detectedUrgency = "Medium";
     if (urgencyMap.high.some(w => text.includes(w))) detectedUrgency = "High";
     else if (urgencyMap.low.some(w => text.includes(w))) detectedUrgency = "Low";
 
-    // Tags from title words
     const stopWords = new Set(["a","an","the","my","for","on","in","is","i","to","and","of","with","help","need","before","into"]);
     const titleWords = document.getElementById("title").value
       .split(/[\s,]+/)
       .filter(w => w.length > 2 && !stopWords.has(w.toLowerCase()))
       .slice(0, 4);
 
-    // Rewrite
     const rewrite = title.length > 8
       ? `"${title.charAt(0).toUpperCase() + title.slice(1)} — looking for expert guidance and community support."`
       : "Start describing the challenge to generate a stronger version.";
 
     aiSuggestion = { category: detectedCat, urgency: detectedUrgency, tags: titleWords, rewrite };
 
-    // Update sidebar
     document.getElementById("ai-category").textContent = detectedCat;
     document.getElementById("ai-category").className   = "ai-val";
     document.getElementById("ai-urgency").textContent  = detectedUrgency;
@@ -167,7 +162,6 @@
     document.getElementById("ai-rewrite").className    = title.length > 8 ? "ai-val" : "ai-val muted";
   }
 
-  // ── Apply AI to form fields ──────────────────────────────────
   function applyAI() {
     if (aiSuggestion.category !== "Community" && aiSuggestion.category !== "Other") {
       document.getElementById("category").value = aiSuggestion.category;
@@ -179,7 +173,6 @@
     }
   }
 
-  // ── Publish Request ──────────────────────────────────────────
   async function publishRequest() {
     const title       = document.getElementById("title").value.trim();
     const description = document.getElementById("description").value.trim();
@@ -188,7 +181,7 @@
     const urgency     = document.getElementById("urgency").value;
 
     if (!title || !description) {
-      return showAlert("Title aur description zaruri hain.", "error");
+      return showAlert("Title and description are required.", "error");
     }
 
     setLoading(true);
@@ -210,13 +203,13 @@
       const data = await res.json();
 
       if (res.ok) {
-        showAlert("✅ Request publish ho gayi! Feed mein aa gayi.", "success");
+        showAlert("Request published", "success");
         setTimeout(() => { window.location.href = "/explore"; }, 1500);
       } else {
-        showAlert("❌ " + data.message, "error");
+        showAlert("" + data.message, "error");
       }
     } catch (err) {
-      showAlert("❌ Network error. Server check karein.", "error");
+      showAlert("Network error. Server check karein.", "error");
     } finally {
       setLoading(false);
     }

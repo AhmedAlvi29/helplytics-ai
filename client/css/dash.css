@@ -104,3 +104,59 @@
     nav { padding: 12px 16px; }
     .hero-banner, .stats-grid, .main-grid { margin-left: 16px; margin-right: 16px; }
   }
+
+    .req-card { animation: fadeIn 0.35s ease both; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .req-card:nth-child(2){animation-delay:.07s}
+  .req-card:nth-child(3){animation-delay:.14s}
+
+  .skeleton { background: #e8e4dc; border-radius: 8px; animation: shimmer 1.2s ease-in-out infinite; }
+  @keyframes shimmer{0%,100%{opacity:1}50%{opacity:.45}}
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.45); align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 20px; padding: 36px;
+    max-width: 560px; width: 90%; max-height: 85vh; overflow-y: auto;
+    position: relative; animation: fadeIn 0.25s ease;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none; font-size: 22px; cursor: pointer; color: #6b7b74;
+  }
+  .modal-close:hover { color: #1a2e2a; }
+  .modal-label { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #6b7b74; margin-bottom: 10px; }
+  .modal-title { font-size: 24px; font-weight: 700; color: #1a2e2a; margin-bottom: 16px; line-height: 1.3; }
+  .modal-desc { font-size: 14px; color: #6b7b74; line-height: 1.75; margin-bottom: 20px; }
+  .modal-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+  .modal-row { display: flex; justify-content: space-between; padding: 12px 0; border-top: 0.5px solid rgba(0,0,0,.09); font-size: 13.5px; }
+  .modal-row-key { color: #6b7b74; }
+  .modal-row-val { font-weight: 600; color: #1a2e2a; }
+  .btn-offer {
+    width: 100%; padding: 13px; background: #1a7a6e; color: #fff;
+    border: none; border-radius: 11px; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-top: 20px; font-family: 'DM Sans', sans-serif;
+    transition: background .2s;
+  }
+  .btn-offer:hover { background: #15635a; }
+
+  /* tag colors used in modal too */
+  .tag { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 12px; }
+  .tag-Web-Development,.tag-web { background:#d4f0e4;color:#1a6b45; }
+  .tag-Design,.tag-design       { background:#dce6ff;color:#2a4bb0; }
+  .tag-Career,.tag-career       { background:#fff0d4;color:#9c6000; }
+  .tag-AI\/ML                   { background:#ede0ff;color:#6b2fb0; }
+  .tag-Mobile                   { background:#e0f4ff;color:#1a6b8a; }
+  .tag-Other                    { background:#ebebeb;color:#444;    }
+  .tag-High,.tag-high           { background:#ffdddd;color:#c0000a; }
+  .tag-Medium,.tag-medium       { background:#fff0d4;color:#9c6000; }
+  .tag-Low,.tag-low             { background:#d4f0e4;color:#1a6b45; }
+  .tag-Open,.tag-open           { background:#ebebeb;color:#444;    }
+  .tag-Solved,.tag-solved       { background:#d4f0e4;color:#1a6b45; }
+
+  .ftag { font-size:11.5px;padding:4px 12px;border-radius:12px;background:#f0ede6;color:#1a2e2a;font-weight:500; }
+
+  .stat-num.loading { background:#e8e4dc;color:transparent;border-radius:6px;animation:shimmer 1.2s ease-in-out infinite; min-width:60px;display:inline-block; }

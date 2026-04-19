@@ -9,7 +9,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="/" class="nav-logo">
     <div class="logo-icon">H</div>
@@ -17,10 +16,10 @@
   </a>
   <div class="nav-links">
     <a href="/dashboard" class="active">Dashboard</a>
-    <a href="#" onclick="window.location.href='/explore'">Explore</a>
-    <a href="#" onclick="window.location.href='/create-request'">Create Request</a>
-    <a href="#" onclick="window.location.href='/messages'">Messages</a>
-    <a href="#" onclick="window.location.href='/profile'">Profile</a>
+    <a href="/explore">Explore</a>
+    <a href="/create-request">Create Request</a>
+    <a href="/messages">Messages</a>
+    <a href="/profile">Profile</a>
   </div>
   <div class="nav-right">
     <span class="nav-notif">Notifications</span>
@@ -40,23 +39,23 @@
 <div class="stats-grid">
   <div class="stat-card">
     <div class="stat-label">Trust Score</div>
-    <div class="stat-num">92%</div>
+    <div class="stat-num" id="statTrust">92%</div>
     <div class="stat-desc">Driven by solved requests and consistent support.</div>
   </div>
   <div class="stat-card">
-    <div class="stat-label">Helping</div>
-    <div class="stat-num">3</div>
-    <div class="stat-desc">Requests where you are currently listed as a helper.</div>
+    <div class="stat-label">Total Requests</div>
+    <div class="stat-num" id="statTotal">—</div>
+    <div class="stat-desc">Total help requests posted in the community.</div>
   </div>
   <div class="stat-card">
     <div class="stat-label">Open Requests</div>
-    <div class="stat-num">2</div>
+    <div class="stat-num" id="statOpen">—</div>
     <div class="stat-desc">Community requests currently active across the feed.</div>
   </div>
   <div class="stat-card">
-    <div class="stat-label">AI Pulse</div>
-    <div class="stat-num serif">1 trends</div>
-    <div class="stat-desc">Trend count detected in the latest request activity.</div>
+    <div class="stat-label">My Requests</div>
+    <div class="stat-num" id="statMine">—</div>
+    <div class="stat-desc">Requests posted by you in the feed.</div>
   </div>
 </div>
 
@@ -68,75 +67,22 @@
     <div class="section-label">Recent Requests</div>
     <div class="section-header">
       <div class="section-title">What the community needs right now</div>
-      <button class="btn-feed">Go to feed</button>
+      <button class="btn-feed" onclick="window.location.href='/explore'">Go to feed</button>
     </div>
 
-    <!-- Card 1 -->
-    <div class="req-card">
-      <div class="req-tags">
-        <span class="tag tag-web">Web Development</span>
-        <span class="tag tag-high">High</span>
-        <span class="tag tag-open">Open</span>
+    <!-- Dynamic feed — JS inject karega -->
+    <div id="dashFeed">
+      <!-- Skeletons -->
+      <div class="req-card" style="gap:10px;display:flex;flex-direction:column">
+        <div class="skeleton" style="width:45%;height:14px"></div>
+        <div class="skeleton" style="width:85%;height:18px"></div>
+        <div class="skeleton" style="width:100%;height:12px"></div>
+        <div class="skeleton" style="width:60%;height:12px"></div>
       </div>
-      <div class="req-title">Need help making my portfolio responsive before demo day</div>
-      <div class="req-desc">My HTML/CSS portfolio breaks on tablets and I need layout guidance before tomorrow evening.</div>
-      <div class="req-footer-tags">
-        <span class="ftag">HTML/CSS</span>
-        <span class="ftag">Responsive</span>
-        <span class="ftag">Portfolio</span>
-      </div>
-      <div class="req-bottom">
-        <div>
-          <div class="req-author">Sara Noor</div>
-          <div class="req-meta">Karachi • 1 helper interested</div>
-        </div>
-        <button class="btn-open">Open details</button>
-      </div>
-    </div>
-
-    <!-- Card 2 -->
-    <div class="req-card">
-      <div class="req-tags">
-        <span class="tag tag-design">Design</span>
-        <span class="tag tag-medium">Medium</span>
-        <span class="tag tag-open">Open</span>
-      </div>
-      <div class="req-title">Looking for Figma feedback on a volunteer event poster</div>
-      <div class="req-desc">I have a draft poster for a campus community event and want sharper hierarchy, spacing, and CTA copy.</div>
-      <div class="req-footer-tags">
-        <span class="ftag">Figma</span>
-        <span class="ftag">Poster</span>
-        <span class="ftag">DesignReview</span>
-      </div>
-      <div class="req-bottom">
-        <div>
-          <div class="req-author">Ayesha Khan</div>
-          <div class="req-meta">Lahore • 2 helpers interested</div>
-        </div>
-        <button class="btn-open">Open details</button>
-      </div>
-    </div>
-
-    <!-- Card 3 -->
-    <div class="req-card">
-      <div class="req-tags">
-        <span class="tag tag-career">Career</span>
-        <span class="tag tag-low">Low</span>
-        <span class="tag tag-solved">Solved</span>
-      </div>
-      <div class="req-title">Need mock interview support for internship applications</div>
-      <div class="req-desc">Applying to frontend internships and need someone to practice behavioral and technical interview questions with me.</div>
-      <div class="req-footer-tags">
-        <span class="ftag">Interview Prep</span>
-        <span class="ftag">Career</span>
-        <span class="ftag">Frontend</span>
-      </div>
-      <div class="req-bottom">
-        <div>
-          <div class="req-author">Sara Noor</div>
-          <div class="req-meta">Remote • 2 helpers interested</div>
-        </div>
-        <button class="btn-open">Open details</button>
+      <div class="req-card" style="gap:10px;display:flex;flex-direction:column;margin-top:14px">
+        <div class="skeleton" style="width:38%;height:14px"></div>
+        <div class="skeleton" style="width:75%;height:18px"></div>
+        <div class="skeleton" style="width:90%;height:12px"></div>
       </div>
     </div>
   </div>
@@ -150,7 +96,7 @@
       <div class="sidebar-card-title">Suggested actions for you</div>
       <div class="insight-row">
         <span class="insight-key">Most requested category</span>
-        <span class="insight-val">Web Development</span>
+        <span class="insight-val" id="aiTopCat">—</span>
       </div>
       <div class="insight-row">
         <span class="insight-key">Your strongest trust driver</span>
@@ -158,11 +104,11 @@
       </div>
       <div class="insight-row">
         <span class="insight-key">AI says you can mentor in</span>
-        <span class="insight-val">HTML/CSS, UI/UX, Career Guidance, Figma</span>
+        <span class="insight-val" id="aiMentorIn">—</span>
       </div>
       <div class="insight-row">
         <span class="insight-key">Your active requests</span>
-        <span class="insight-val">1</span>
+        <span class="insight-val" id="aiMyActive">—</span>
       </div>
     </div>
 
@@ -170,43 +116,195 @@
     <div class="sidebar-card">
       <div class="section-label">Notifications</div>
       <div class="sidebar-card-title">Latest updates</div>
-      <div class="notif-item">
-        <div>
-          <div class="notif-text">Ayesha Khan offered help on "Looking for Figma feedback on a volunteer event poster"</div>
-          <div class="notif-meta">Match • Just now</div>
+      <div id="notifList">
+        <div class="notif-item">
+          <div>
+            <div class="notif-text">Feed load ho rahi hai...</div>
+            <div class="notif-meta">—</div>
+          </div>
         </div>
-        <span class="badge-unread">Unread</span>
-      </div>
-      <div class="notif-item">
-        <div>
-          <div class="notif-text">New helper matched to your responsive portfolio request</div>
-          <div class="notif-meta">Match • 12 min ago</div>
-        </div>
-        <span class="badge-unread">Unread</span>
-      </div>
-      <div class="notif-item">
-        <div>
-          <div class="notif-text">Your trust score increased after a solved request</div>
-          <div class="notif-meta">Reputation • 1 hr ago</div>
-        </div>
-        <span class="badge-unread">Unread</span>
       </div>
     </div>
 
   </div>
 </div>
 
+<!-- REQUEST DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalBox">
+    <button class="modal-close" onclick="closeModal(null, true)">✕</button>
+    <div class="modal-label" id="mLabel">—</div>
+    <div class="modal-tags" id="mTags"></div>
+    <div class="modal-title" id="mTitle">—</div>
+    <div class="modal-desc" id="mDesc">—</div>
+    <div class="modal-row"><span class="modal-row-key">Posted by</span><span class="modal-row-val" id="mAuthor">—</span></div>
+    <div class="modal-row"><span class="modal-row-key">Location</span><span class="modal-row-val" id="mCity">—</span></div>
+    <div class="modal-row"><span class="modal-row-key">Category</span><span class="modal-row-val" id="mCategory">—</span></div>
+    <div class="modal-row"><span class="modal-row-key">Urgency</span><span class="modal-row-val" id="mUrgency">—</span></div>
+    <div class="modal-row"><span class="modal-row-key">Status</span><span class="modal-row-val" id="mStatus">—</span></div>
+    <div class="modal-row"><span class="modal-row-key">Helpers interested</span><span class="modal-row-val" id="mHelpers">—</span></div>
+    <div class="modal-row"><span class="modal-row-key">Posted</span><span class="modal-row-val" id="mTime">—</span></div>
+    <button class="btn-offer" onclick="offerHelp()">Offer to help</button>
+  </div>
+</div>
+
 <script>
-  // ── Protected Route — login check ──────────────────────────
+  // ── Protected Route ──────────────────────────────────────────
   const user = JSON.parse(localStorage.getItem("helphub_user") || "null");
-  if (!user) {
-    window.location.href = "/auth";
-  } else {
-    // Welcome message mein naam dikao
-    document.getElementById("welcomeMsg").textContent = "Welcome back, " + user.name + ".";
+  if (!user) window.location.href = "/auth";
+  else document.getElementById("welcomeMsg").textContent = "Welcome back, " + user.name + ".";
+
+  let allRequests = [];
+  let currentRequest = null;
+
+  function esc(s) {
+    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+  function timeAgo(d) {
+    const diff = Math.floor((Date.now() - new Date(d))/1000);
+    if (diff < 60)    return "Just now";
+    if (diff < 3600)  return Math.floor(diff/60)   + " min ago";
+    if (diff < 86400) return Math.floor(diff/3600)  + " hr ago";
+    return Math.floor(diff/86400) + " days ago";
+  }
+  function tagClass(val) {
+    return "tag-" + val.replace(/\//g,"\\/").replace(/\s+/g,"-");
   }
 
-  // ── Logout ─────────────────────────────────────────────────
+  function renderFeed(requests) {
+    const feed = document.getElementById("dashFeed");
+    const recent = requests.slice(0, 5); 
+
+    if (!recent.length) {
+      feed.innerHTML = `<div style="text-align:center;padding:40px 20px;color:#6b7b74;">
+        <p style="margin-bottom:16px">Abhi koi request nahi.</p>
+        <a href="/create-request" style="color:#1a7a6e;font-weight:600">Pehli request create karein →</a>
+      </div>`;
+      return;
+    }
+
+    feed.innerHTML = recent.map((r, i) => `
+      <div class="req-card" style="margin-bottom:14px;animation-delay:${i*0.07}s">
+        <div class="req-tags">
+          <span class="tag ${tagClass(r.category)}">${esc(r.category)}</span>
+          <span class="tag ${tagClass(r.urgency)}">${esc(r.urgency)}</span>
+          <span class="tag ${tagClass(r.status)}">${esc(r.status)}</span>
+        </div>
+        <div class="req-title">${esc(r.title)}</div>
+        <div class="req-desc">${esc(r.description)}</div>
+        ${r.tags?.length ? `
+        <div class="req-footer-tags">
+          ${r.tags.map(t=>`<span class="ftag">${esc(t)}</span>`).join("")}
+        </div>` : ""}
+        <div class="req-bottom">
+          <div>
+            <div class="req-author">${esc(r.author?.name||"Anonymous")}</div>
+            <div class="req-meta">${esc(r.author?.city||"")} • ${r.helpersInterested||0} helper interested</div>
+          </div>
+          <button class="btn-open" onclick="openModal('${r._id}')">Open details</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // ── Update stats ─────────────────────────────────────────────
+  function updateStats(requests) {
+    const total  = requests.length;
+    const open   = requests.filter(r => r.status === "Open").length;
+    const mine   = requests.filter(r => r.author?.id === user.id || r.author?.name === user.name).length;
+
+    document.getElementById("statTotal").textContent = total;
+    document.getElementById("statOpen").textContent  = open;
+    document.getElementById("statMine").textContent  = mine;
+
+    const catCount = {};
+    requests.forEach(r => { catCount[r.category] = (catCount[r.category]||0)+1; });
+    const topCat = Object.entries(catCount).sort((a,b)=>b[1]-a[1])[0];
+    document.getElementById("aiTopCat").textContent   = topCat ? topCat[0] : "—";
+    document.getElementById("aiMyActive").textContent = mine;
+
+    const top3 = Object.entries(catCount).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]);
+    document.getElementById("aiMentorIn").textContent = top3.join(", ") || "—";
+  }
+
+  // ── Update notifications ─────────────────────────────────────
+  function updateNotifs(requests) {
+    const latest = requests.slice(0, 3);
+    const list   = document.getElementById("notifList");
+
+    if (!latest.length) {
+      list.innerHTML = `<div class="notif-item"><div class="notif-text" style="color:#6b7b74">Koi update nahi</div></div>`;
+      return;
+    }
+
+    list.innerHTML = latest.map(r => `
+      <div class="notif-item">
+        <div>
+          <div class="notif-text">${esc(r.author?.name||"Someone")} posted: "${esc(r.title.slice(0,55))}${r.title.length>55?"...":""}"</div>
+          <div class="notif-meta">New request • ${timeAgo(r.createdAt)}</div>
+        </div>
+        <span class="badge-unread">New</span>
+      </div>
+    `).join("");
+  }
+
+  async function fetchDashboard() {
+    try {
+      const res  = await fetch("/api/requests");
+      const data = await res.json();
+      allRequests = data;
+      renderFeed(data);
+      updateStats(data);
+      updateNotifs(data);
+    } catch (err) {
+      console.error("Dashboard fetch error:", err);
+    }
+  }
+
+  fetchDashboard();
+  setInterval(fetchDashboard, 30000);
+
+  // ── Modal open ───────────────────────────────────────────────
+  function openModal(id) {
+    const r = allRequests.find(x => x._id === id);
+    if (!r) return;
+    currentRequest = r;
+
+    document.getElementById("mLabel").textContent    = r.category + " • " + r.status;
+    document.getElementById("mTitle").textContent    = r.title;
+    document.getElementById("mDesc").textContent     = r.description;
+    document.getElementById("mAuthor").textContent   = r.author?.name  || "Anonymous";
+    document.getElementById("mCity").textContent     = r.author?.city  || "—";
+    document.getElementById("mCategory").textContent = r.category;
+    document.getElementById("mUrgency").textContent  = r.urgency;
+    document.getElementById("mStatus").textContent   = r.status;
+    document.getElementById("mHelpers").textContent  = r.helpersInterested || 0;
+    document.getElementById("mTime").textContent     = timeAgo(r.createdAt);
+
+    // tags
+    const allTags = [r.category, r.urgency, r.status, ...(r.tags||[])];
+    document.getElementById("mTags").innerHTML = allTags.map(t =>
+      `<span class="tag ${tagClass(t)}">${esc(t)}</span>`
+    ).join("");
+
+    document.getElementById("modalOverlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal(e, force) {
+    if (force || (e && e.target === document.getElementById("modalOverlay"))) {
+      document.getElementById("modalOverlay").classList.remove("open");
+      document.body.style.overflow = "";
+    }
+  }
+
+  async function offerHelp() {
+    if (!currentRequest) return;
+    alert("Offer submited");
+    closeModal(null, true);
+  }
+
+  // ── Logout ───────────────────────────────────────────────────
   function logout() {
     localStorage.removeItem("helphub_user");
     window.location.href = "/auth";

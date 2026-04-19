@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HelpHub AI - Messages</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/message.css">
+</head>
+<body>
+
+<nav>
+  <a href="/dashboard" class="nav-logo">
+    <div class="logo-icon">H</div>
+    HelpHub AI
+  </a>
+  <div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/explore">Explore</a>
+    <a href="/messages" class="active">Messages</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Interaction / Messaging</div>
+  <div class="hero-title">Keep support moving through direct communication.</div>
+  <div class="hero-desc">Basic messaging gives helpers and requesters a clear follow-up path once a match happens.</div>
+</div>
+
+<div class="main-grid">
+
+  <div class="card">
+    <div class="card-label">Conversation Stream</div>
+    <div class="card-title">Recent messages</div>
+    <div class="conv-list" id="convList">
+      <div class="empty-convs">Messages load ho rahi hain...</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Send Message</div>
+    <div class="card-title">Start a conversation</div>
+
+    <div class="alert" id="alertBox"></div>
+
+    <div class="form-group">
+      <label class="form-label">To</label>
+      <select class="form-select" id="toUser">
+        <option value="">Loading users...</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Message</label>
+      <textarea class="form-textarea" id="msgText" placeholder="Share support details, ask for files, or suggest next steps."></textarea>
+    </div>
+
+    <button class="btn-send" id="sendBtn" onclick="sendMessage()">
+      <span id="send-text">Send</span>
+      <div class="spinner" id="send-spinner"></div>
+    </button>
+  </div>
+
+</div>
+
+<div class="chat-view" id="chatView" onclick="handleChatOverlay(event)">
+  <div class="chat-box">
+    <div class="chat-header">
+      <div>
+        <div class="chat-header-name" id="chatWithName">—</div>
+        <div class="chat-header-sub">Direct conversation</div>
+      </div>
+      <button class="chat-close" onclick="closeChatView()">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-empty">Loading...</div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChatMsg()"/>
+      <button class="chat-send-btn" onclick="sendChatMsg()">Send</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Auth ─────────────────────────────────────────────────────
+  const user = JSON.parse(localStorage.getItem("helphub_user") || "null");
+  if (!user) window.location.href = "/auth";
+
+  let chatWithUser = null;
+  let chatInterval = null;
+
+  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function fmtTime(d) {
+    return new Date(d).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
+  }
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 2800);
+  }
+  function showAlert(msg, type) {
+    const b = document.getElementById("alertBox");
+    b.className = "alert"; b.textContent = msg;
+    if (msg) b.classList.add(type);
+  }
+  function setLoading(on) {
+    document.getElementById("sendBtn").disabled           = on;
+    document.getElementById("send-spinner").style.display = on?"block":"none";
+    document.getElementById("send-text").style.opacity    = on?"0":"1";
+  }
+
+  async function loadUsers() {
+    try {
+      const res   = await fetch(`/api/messages/users?excludeId=${user.id}`);
+      const users = await res.json();
+      const sel   = document.getElementById("toUser");
+      if (!users.length) {
+        sel.innerHTML = `<option value="">No users right now</option>`;
+        return;
+      }
+      sel.innerHTML = `<option value="">Select a user</option>` +
+        users.map(u => `<option value="${u._id}" data-name="${esc(u.name)}">${esc(u.name)}${u.city?" • "+esc(u.city):""}</option>`).join("");
+    } catch(err) { console.error("Load users:", err); }
+  }
+
+  async function loadConversations() {
+    try {
+      const res  = await fetch(`/api/messages?userId=${user.id}`);
+      const msgs = await res.json();
+      const list = document.getElementById("convList");
+
+      if (!msgs.length) {
+        list.innerHTML = `<div class="empty-convs">No messages right now.<br>Send first message from top!</div>`;
+        return;
+      }
+
+      const convMap = {};
+      msgs.forEach(m => {
+        const partnerId   = m.from.id === user.id ? m.to.id   : m.from.id;
+        const partnerName = m.from.id === user.id ? m.to.name : m.from.name;
+        const key = partnerId;
+        if (!convMap[key]) convMap[key] = { id: partnerId, name: partnerName, messages: [] };
+        convMap[key].messages.push(m);
+      });
+
+      list.innerHTML = Object.values(convMap).map(conv => {
+        const latest  = conv.messages[0];
+        const preview = latest.from.id === user.id
+          ? "You: " + latest.message
+          : latest.message;
+        const time    = fmtTime(latest.createdAt);
+        const unread  = conv.messages.some(m => m.to.id === user.id && !m.read);
+        return `
+          <div class="conv-item ${unread?'conv-unread':''}" onclick="openChat('${conv.id}','${esc(conv.name)}')">
+            <div class="conv-item-left">
+              <div class="conv-names">${esc(user.name)} → ${esc(conv.name)}</div>
+              <div class="conv-preview">${esc(preview)}</div>
+            </div>
+            <div class="conv-time"><span>${time}</span></div>
+          </div>`;
+      }).join("");
+    } catch(err) { console.error("Load convs:", err); }
+  }
+
+  async function sendMessage() {
+    const sel     = document.getElementById("toUser");
+    const toId    = sel.value;
+    const toName  = sel.options[sel.selectedIndex]?.getAttribute("data-name") || "";
+    const message = document.getElementById("msgText").value.trim();
+
+    if (!toId)    return showAlert("Please select a user.", "error");
+    if (!message) return showAlert("Message not empty.", "error");
+
+    setLoading(true); showAlert("","");
+    try {
+      const res  = await fetch("/api/messages", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ fromId:user.id, fromName:user.name, toId, toName, message }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        document.getElementById("msgText").value = "";
+        showAlert("Message sent!", "success");
+        showToast("Message sent to " + toName);
+        loadConversations();
+      } else {
+        showAlert( data.message, "error");
+      }
+    } catch(err) { showAlert("Network error.", "error"); }
+    finally { setLoading(false); }
+  }
+
+  // ── Open chat view ───────────────────────────────────────────
+  function openChat(otherId, otherName) {
+    chatWithUser = { id: otherId, name: otherName };
+    document.getElementById("chatWithName").textContent = otherName;
+    document.getElementById("chatView").classList.add("open");
+    document.body.style.overflow = "hidden";
+    loadChatMessages();
+    clearInterval(chatInterval);
+    chatInterval = setInterval(loadChatMessages, 5000);
+  }
+
+  function closeChatView() {
+    document.getElementById("chatView").classList.remove("open");
+    document.body.style.overflow = "";
+    clearInterval(chatInterval);
+    chatWithUser = null;
+    loadConversations();
+  }
+
+  function handleChatOverlay(e) {
+    if (e.target === document.getElementById("chatView")) closeChatView();
+  }
+
+  async function loadChatMessages() {
+    if (!chatWithUser) return;
+    try {
+      const res  = await fetch(`/api/messages/conversation?userId=${user.id}&otherId=${chatWithUser.id}`);
+      const msgs = await res.json();
+      const box  = document.getElementById("chatMessages");
+      const wasAtBottom = box.scrollHeight - box.scrollTop <= box.clientHeight + 50;
+
+      if (!msgs.length) {
+        box.innerHTML = `<div class="chat-empty">No messages right now</div>`;
+        return;
+      }
+
+      box.innerHTML = msgs.map(m => {
+        const mine = m.from.id === user.id || m.from.name === user.name;
+        return `
+          <div class="chat-bubble-wrap ${mine?"mine":"theirs"}">
+            <div class="chat-bubble">${esc(m.message)}</div>
+            <div class="chat-bubble-time">${fmtTime(m.createdAt)}</div>
+          </div>`;
+      }).join("");
+
+      if (wasAtBottom) box.scrollTop = box.scrollHeight;
+    } catch(err) { console.error("Load chat:", err); }
+  }
+
+  async function sendChatMsg() {
+    if (!chatWithUser) return;
+    const input   = document.getElementById("chatInput");
+    const message = input.value.trim();
+    if (!message) return;
+
+    const btn = document.querySelector(".chat-send-btn");
+    btn.disabled = true;
+    input.value  = "";
+
+    try {
+      await fetch("/api/messages", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+          fromId:user.id, fromName:user.name,
+          toId:chatWithUser.id, toName:chatWithUser.name,
+          message,
+        }),
+      });
+      loadChatMessages();
+    } catch(err) { console.error("Send chat msg:", err); }
+    finally { btn.disabled = false; input.focus(); }
+  }
+
+  loadUsers();
+  loadConversations();
+  setInterval(loadConversations, 15000);
+</script>
+</body>
+</html>

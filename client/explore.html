@@ -4,425 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>HelpHub AI - Explore</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg-page:    #f0eeea;
-    --bg-white:   #ffffff;
-    --bg-nav:     #F0EDE6;
-    --bg-header:  #1e3530;
-    --bg-sidebar: #ffffff;
-    --bg-input:   #f7f6f3;
-    --border:     #e4e2db;
-    --border2:    #d0cec7;
-    --text:       #1a1a1a;
-    --muted:      #6b6b6b;
-    --label:      #9a9a9a;
-
-    --tag-cat-bg:    #efefef;
-    --tag-cat-color: #2e2e2e;
-    --tag-high-bg:   #fde8e8;
-    --tag-high-col:  #c0392b;
-    --tag-med-bg:    #fef3e2;
-    --tag-med-col:   #b45309;
-    --tag-low-bg:    #e6f9f1;
-    --tag-low-col:   #1a7a4a;
-    --tag-open-bg:   #eef0ff;
-    --tag-open-col:  #4a56c1;
-    --tag-solved-bg: #e6f9f1;
-    --tag-solved-col:#1a7a4a;
-
-    --accent:     #1e2330;
-    --radius:     14px;
-    --radius-sm:  8px;
-    --radius-xs:  6px;
-  }
-
-  body {
-    font-family: 'Instrument Sans', sans-serif;
-    background: var(--bg-page);
-    color: var(--text);
-    min-height: 100vh;
-    line-height: 1.6;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 36px;
-    height: 58px;
-    background: var(--bg-nav);
-  }
-
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    color: #151515;
-    margin-right: 20px;
-  }
-
-  .logo-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 7px;
-    background: #1A7A6E;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 800;
-    color: #fff;
-    font-family: 'Syne', sans-serif;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 2px;
-    flex: 1;
-  }
-
-  .nav-links a {
-    text-decoration: none;
-    color: #1A1818;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 6px 14px;
-    border-radius: var(--radius-xs);
-    transition: all 0.15s;
-  }
-
-  .nav-links a:hover { color: #656464; background: rgba(255,255,255,0.07); }
-
-  .nav-links a.active {
-    color: #1a1818;
-    background: rgba(255,255,255,0.12);
-  }
-
-  .btn-create {
-    margin-left: auto;
-    text-decoration: none;
-    background: #232020;
-    color: var(--bg-nav);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 7px 16px;
-    border-radius: var(--radius-xs);
-    font-family: 'Syne', sans-serif;
-    transition: opacity 0.15s;
-    white-space: nowrap;
-  }
-
-  .btn-create:hover { opacity: 0.88; }
-
-  /* ── PAGE HEADER ── */
-  .page-header {
-    background: var(--bg-header);
-    margin: 20px 32px;
-    border-radius: 18px;
-    padding: 44px 48px 40px;
-  }
-
-  .page-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 12px;
-  }
-
-  .page-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(26px, 3.5vw, 42px);
-    font-weight: 800;
-    line-height: 1.12;
-    color: #fff;
-    margin-bottom: 12px;
-  }
-
-  .page-desc {
-    font-size: 14px;
-    color: rgba(255,255,255,0.42);
-    margin-bottom: 22px;
-  }
-
-  .live-bar {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.11);
-    padding: 5px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    color: rgba(255,255,255,0.45);
-  }
-
-  .live-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #3ecf8e;
-    animation: pulse 2s infinite;
-  }
-
-  .live-text {
-    color: #3ecf8e;
-    font-weight: 600;
-    font-size: 12px;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.35; }
-  }
-
-  /* ── LAYOUT ── */
-  .layout {
-    margin: 0 32px 48px;
-    display: grid;
-    grid-template-columns: 252px 1fr;
-    gap: 20px;
-    align-items: start;
-  }
-
-  /* ── SIDEBAR ── */
-  .sidebar {
-    position: sticky;
-    top: 78px;
-    background: var(--bg-sidebar);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px 22px;
-  }
-
-  .sidebar-section-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--label);
-    margin-bottom: 4px;
-  }
-
-  .sidebar-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--text);
-    margin-bottom: 24px;
-  }
-
-  .filter-group { margin-bottom: 18px; }
-
-  .filter-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    margin-bottom: 7px;
-  }
-
-  .select-wrap { position: relative; }
-  .select-wrap::after {
-    content: '';
-    position: absolute;
-    right: 11px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0; height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid var(--muted);
-    pointer-events: none;
-  }
-
-  .filter-group select,
-  .filter-group input {
-    width: 100%;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 13px;
-    padding: 9px 11px;
-    border-radius: var(--radius-sm);
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-    transition: border-color 0.15s;
-  }
-
-  .filter-group select:focus,
-  .filter-group input:focus { border-color: #8b8b8b; }
-
-  .filter-group input::placeholder { color: var(--label); }
-
-  /* ── FEED ── */
-  .feed { display: flex; flex-direction: column; gap: 12px; }
-
-  /* ── CARD ── */
-  .req-card {
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 22px 24px;
-    transition: box-shadow 0.18s, transform 0.15s;
-    cursor: pointer;
-  }
-
-  .req-card:hover {
-    box-shadow: 0 4px 18px rgba(0,0,0,0.07);
-    transform: translateY(-1px);
-  }
-
-  .req-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
-
-  .tag {
-    font-size: 12px;
-    font-weight: 500;
-    padding: 4px 12px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-  }
-
-  .tag-Web\.Development, .tag-Web\/Development,
-  .tag-Design, .tag-Career, .tag-Education, .tag-Other {
-    background: var(--tag-cat-bg);
-    color: var(--tag-cat-color);
-    border-color: var(--border2);
-  }
-
-  .tag-high,   .tag-High   { background: var(--tag-high-bg); color: var(--tag-high-col); }
-  .tag-medium, .tag-Medium { background: var(--tag-med-bg);  color: var(--tag-med-col);  }
-  .tag-low,    .tag-Low    { background: var(--tag-low-bg);  color: var(--tag-low-col);  }
-  .tag-open,   .tag-Open   { background: var(--tag-open-bg); color: var(--tag-open-col); }
-  .tag-solved, .tag-Solved { background: var(--tag-solved-bg); color: var(--tag-solved-col); }
-  .tag-closed, .tag-Closed { background: #f0f0f0; color: #888; }
-
-  .req-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 7px;
-    line-height: 1.3;
-  }
-
-  .req-desc {
-    font-size: 13.5px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 14px;
-  }
-
-  .req-footer-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-
-  .ftag {
-    font-size: 12px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    background: #f2f1ee;
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
-
-  .req-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-  }
-
-  .req-author { font-size: 13px; font-weight: 600; color: var(--text); }
-  .req-meta   { font-size: 12px; color: var(--label); margin-top: 2px; }
-
-  .req-right  { display: flex; align-items: center; gap: 12px; }
-  .req-time   { font-size: 12px; color: var(--label); }
-
-  .btn-details {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    background: var(--bg-input);
-    border: 1px solid var(--border2);
-    padding: 6px 14px;
-    border-radius: var(--radius-xs);
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.15s;
-    white-space: nowrap;
-  }
-
-  .btn-details:hover { background: #e8e6e0; }
-
-  /* ── SKELETON ── */
-  .skeleton-card {
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 22px 24px;
-  }
-
-  .skeleton-line {
-    background: #eeece7;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    animation: shimmer 1.6s ease-in-out infinite;
-  }
-
-  @keyframes shimmer {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
-
-  /* ── EMPTY ── */
-  .empty {
-    text-align: center;
-    padding: 64px 24px;
-    background: var(--bg-white);
-    border: 1px dashed var(--border2);
-    border-radius: var(--radius);
-  }
-
-  .empty-icon { font-size: 40px; margin-bottom: 16px; }
-  .empty h3 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-  .empty p  { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
-
-  .btn-primary {
-    display: inline-block;
-    text-decoration: none;
-    background: var(--accent);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 10px 22px;
-    border-radius: var(--radius-sm);
-    font-family: 'Syne', sans-serif;
-    transition: opacity 0.15s;
-  }
-
-  .btn-primary:hover { opacity: 0.85; }
-
-  @media (max-width: 768px) {
-    .layout { grid-template-columns: 1fr; margin: 0 16px 48px; }
-    .sidebar { position: static; }
-    nav { padding: 0 16px; }
-    .page-header { margin: 12px 16px; padding: 28px 24px; }
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/explore.css">
 </head>
 <body>
 
@@ -432,11 +15,12 @@
     HelpHub AI
   </a>
   <div class="nav-links">
-    <a href="/dashboard">Dashboard</a>
-    <a href="/explore" class="active">Explore</a>
-    <a href="/create-request">Create Request</a>
+    <a onclick="window.location.href='/dashboard'">Dashboard</a>
+    <a onclick="window.location.href='/explore'" class="active">Explore</a>
+    <a onclick="window.location.href='/leaderboard'">LeaderBoard</a>
+    <a onclick="window.location.href='/notifications'">Notifications</a>
   </div>
-  <a href="/create-request" class="btn-create">+ New Request</a>
+  <a onclick="window.location.href='/create-request'" class="btn-create">+ New Request</a>
 </nav>
 
 <div class="page-header">
@@ -464,6 +48,8 @@
           <option value="Design">Design</option>
           <option value="Career">Career</option>
           <option value="Education">Education</option>
+          <option value="AI/ML">AI/ML</option>
+          <option value="Mobile">Mobile</option>
           <option value="Other">Other</option>
         </select>
       </div>
@@ -474,15 +60,26 @@
       <div class="select-wrap">
         <select id="filterUrgency">
           <option value="">All urgency levels</option>
-          <option value="high">High</option>
-          <option value="medium">Medium</option>
-          <option value="low">Low</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
         </select>
       </div>
     </div>
 
     <div class="filter-group">
-      <div class="filter-label">Skills</div>
+      <div class="filter-label">Status</div>
+      <div class="select-wrap">
+        <select id="filterStatus">
+          <option value="">All</option>
+          <option value="Open">Open</option>
+          <option value="Solved">Solved</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">Skills / Tags</div>
       <input type="text" id="filterSkills" placeholder="React, Figma, Git/GitHub" />
     </div>
 
@@ -507,39 +104,115 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modalBox">
+
+    <div class="modal-hero">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-hero-tags" id="mHeroTags"></div>
+      <div class="modal-hero-title" id="mTitle">—</div>
+      <div class="modal-hero-meta" id="mMeta">—</div>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="modal-desc" id="mDesc">—</div>
+
+      <div class="modal-info-grid">
+        <div class="modal-info-cell">
+          <div class="modal-info-key">Posted by</div>
+          <div class="modal-info-val" id="mAuthor">—</div>
+        </div>
+        <div class="modal-info-cell">
+          <div class="modal-info-key">Location</div>
+          <div class="modal-info-val" id="mCity">—</div>
+        </div>
+        <div class="modal-info-cell">
+          <div class="modal-info-key">Urgency</div>
+          <div class="modal-info-val" id="mUrgency">—</div>
+        </div>
+        <div class="modal-info-cell">
+          <div class="modal-info-key">Status</div>
+          <div class="modal-info-val" id="mStatus">—</div>
+        </div>
+        <div class="modal-info-cell">
+          <div class="modal-info-key">Helpers interested</div>
+          <div class="modal-info-val" id="mHelpers">—</div>
+        </div>
+        <div class="modal-info-cell">
+          <div class="modal-info-key">Posted</div>
+          <div class="modal-info-val" id="mTime">—</div>
+        </div>
+      </div>
+
+      <div class="modal-tags-row" id="mTagsRow" style="display:none">
+        <div class="modal-tags-label">Tags</div>
+        <div class="modal-tags-chips" id="mTagsChips"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-help" id="btnHelp" onclick="handleHelp()">
+           I can help
+        </button>
+        <button class="btn-solved" id="btnSolved" onclick="handleSolved()">
+           Mark as Solved
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
   const user = JSON.parse(localStorage.getItem("helphub_user") || "null");
   if (!user) window.location.href = "/auth";
 
-  function timeAgo(dateStr) {
-    const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
-    if (diff < 60)    return "Just now";
-    if (diff < 3600)  return Math.floor(diff/60) + " min ago";
-    if (diff < 86400) return Math.floor(diff/3600) + " hr ago";
-    return Math.floor(diff/86400) + " days ago";
-  }
+  let allRequests   = [];
+  let currentReq    = null;
 
-  function escHtml(str) {
-    return String(str || "")
-      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  function esc(s) {
+    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
-
-  let allRequests = [];
+  function timeAgo(d) {
+    const diff = Math.floor((Date.now()-new Date(d))/1000);
+    if (diff<60)    return "Just now";
+    if (diff<3600)  return Math.floor(diff/60)+" min ago";
+    if (diff<86400) return Math.floor(diff/3600)+" hr ago";
+    return Math.floor(diff/86400)+" days ago";
+  }
+  function tagCls(v) {
+    const map = {
+      "Web Development":"tag-Web-Development","Design":"tag-Design",
+      "Career":"tag-Career","Education":"tag-Education","AI/ML":"tag-AIML",
+      "Mobile":"tag-Mobile","Other":"tag-Other",
+      "High":"tag-High","Medium":"tag-Medium","Low":"tag-Low",
+      "Open":"tag-Open","Solved":"tag-Solved"
+    };
+    return map[v] || "tag-Other";
+  }
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=> t.classList.remove("show"), 2800);
+  }
 
   function applyFilters() {
-    const cat = document.getElementById("filterCategory").value.toLowerCase();
-    const urg = document.getElementById("filterUrgency").value.toLowerCase();
+    const cat = document.getElementById("filterCategory").value;
+    const urg = document.getElementById("filterUrgency").value;
+    const sta = document.getElementById("filterStatus").value;
     const ski = document.getElementById("filterSkills").value.toLowerCase().trim();
     const loc = document.getElementById("filterLocation").value.toLowerCase().trim();
     return allRequests.filter(r => {
-      if (cat && r.category?.toLowerCase() !== cat) return false;
-      if (urg && r.urgency?.toLowerCase() !== urg)  return false;
+      if (cat && r.category !== cat) return false;
+      if (urg && r.urgency  !== urg) return false;
+      if (sta && r.status   !== sta) return false;
       if (ski) {
-        const tags = (r.tags || []).map(t => t.toLowerCase()).join(" ");
-        if (!tags.includes(ski)) return false;
+        const tags = (r.tags||[]).map(t=>t.toLowerCase()).join(" ");
+        if (!tags.includes(ski) && !r.title.toLowerCase().includes(ski)) return false;
       }
-      if (loc && !(r.author?.city || "").toLowerCase().includes(loc)) return false;
+      if (loc && !(r.author?.city||"").toLowerCase().includes(loc)) return false;
       return true;
     });
   }
@@ -549,31 +222,31 @@
     if (!requests.length) {
       feed.innerHTML = `
         <div class="empty">
-          <div class="empty-icon">🙋</div>
-          <h3>Abhi koi request nahi</h3>
-          <p>Pehle request aap hi karein — community wait kar rahi hai!</p>
-          <a href="/create-request" class="btn-primary">Create first request</a>
+         
+          <h3>No request found</h3>
+          <p>Change filters or create first request.</p>
+          <a href="/create-request" class="btn-primary">Create request</a>
         </div>`;
       return;
     }
     feed.innerHTML = requests.map(r => `
       <div class="req-card">
         <div class="req-tags">
-          <span class="tag tag-${escHtml(r.category)}">${escHtml(r.category)}</span>
-          <span class="tag tag-${escHtml(r.urgency)}">${escHtml(r.urgency)}</span>
-          <span class="tag tag-${escHtml(r.status)}">${escHtml(r.status)}</span>
+          <span class="tag ${tagCls(r.category)}">${esc(r.category)}</span>
+          <span class="tag ${tagCls(r.urgency)}">${esc(r.urgency)}</span>
+          <span class="tag ${tagCls(r.status)}">${esc(r.status)}</span>
         </div>
-        <div class="req-title">${escHtml(r.title)}</div>
-        <div class="req-desc">${escHtml(r.description)}</div>
-        ${r.tags?.length ? `<div class="req-footer-tags">${r.tags.map(t=>`<span class="ftag">${escHtml(t)}</span>`).join("")}</div>` : ""}
+        <div class="req-title">${esc(r.title)}</div>
+        <div class="req-desc">${esc(r.description)}</div>
+        ${r.tags?.length?`<div class="req-footer-tags">${r.tags.map(t=>`<span class="ftag">${esc(t)}</span>`).join("")}</div>`:""}
         <div class="req-bottom">
           <div>
-            <div class="req-author">${escHtml(r.author?.name || "Anonymous")}</div>
-            <div class="req-meta">${escHtml(r.author?.city || "")} • ${r.helpersInterested} helpers interested</div>
+            <div class="req-author">${esc(r.author?.name||"Anonymous")}</div>
+            <div class="req-meta">${esc(r.author?.city||"")} • ${r.helpersInterested||0} helpers interested</div>
           </div>
           <div class="req-right">
             <span class="req-time">${timeAgo(r.createdAt)}</span>
-            <a href="/request/${escHtml(r._id || '')}" class="btn-details">Open details</a>
+            <button class="btn-details" onclick="openModal('${r._id}')">Open details</button>
           </div>
         </div>
       </div>
@@ -588,18 +261,153 @@
       renderFeed(applyFilters());
       document.getElementById("lastUpdated").textContent =
         "Last updated: " + new Date().toLocaleTimeString();
-    } catch (err) {
-      console.error("Feed error:", err);
-    }
+    } catch(err) { console.error("Feed error:", err); }
   }
 
-  ["filterCategory","filterUrgency","filterSkills","filterLocation"].forEach(id => {
-    document.getElementById(id).addEventListener("input",  () => renderFeed(applyFilters()));
-    document.getElementById(id).addEventListener("change", () => renderFeed(applyFilters()));
+  ["filterCategory","filterUrgency","filterStatus","filterSkills","filterLocation"].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener("input",  ()=> renderFeed(applyFilters()));
+    el.addEventListener("change", ()=> renderFeed(applyFilters()));
   });
 
   fetchRequests();
   setInterval(fetchRequests, 10000);
+
+  function openModal(id) {
+    const r = allRequests.find(x => x._id === id);
+    if (!r) return;
+    currentReq = r;
+
+    document.getElementById("mHeroTags").innerHTML =
+      [r.category, r.urgency, r.status].map(v=>
+        `<span class="tag ${tagCls(v)}" style="opacity:.9">${esc(v)}</span>`
+      ).join("");
+
+    document.getElementById("mTitle").textContent  = r.title;
+    document.getElementById("mMeta").textContent   =
+      `Posted by ${r.author?.name||"Anonymous"} • ${timeAgo(r.createdAt)}`;
+    document.getElementById("mDesc").textContent   = r.description;
+    document.getElementById("mAuthor").textContent = r.author?.name  || "Anonymous";
+    document.getElementById("mCity").textContent   = r.author?.city  || "—";
+    document.getElementById("mUrgency").textContent= r.urgency;
+    document.getElementById("mStatus").textContent = r.status;
+    document.getElementById("mHelpers").textContent= r.helpersInterested || 0;
+    document.getElementById("mTime").textContent   = timeAgo(r.createdAt);
+
+    if (r.tags?.length) {
+      document.getElementById("mTagsRow").style.display = "block";
+      document.getElementById("mTagsChips").innerHTML =
+        r.tags.map(t=>`<span class="ftag">${esc(t)}</span>`).join("");
+    } else {
+      document.getElementById("mTagsRow").style.display = "none";
+    }
+
+    const btnHelp   = document.getElementById("btnHelp");
+    const btnSolved = document.getElementById("btnSolved");
+    btnHelp.className   = "btn-help";
+    btnSolved.className = "btn-solved";
+    btnHelp.textContent   = " I can help";
+    btnSolved.textContent = "Mark as Solved";
+    btnHelp.disabled   = false;
+    btnSolved.disabled = false;
+
+    if (r.status === "Solved") {
+      btnSolved.classList.add("done");
+      btnSolved.textContent = "Already Solved";
+      btnHelp.disabled = true;
+    }
+
+    if (r.author?.name === user.name || r.author?.id === user.id) {
+      btnHelp.disabled = true;
+      btnHelp.textContent = " Your own request";
+    }
+
+    document.getElementById("modalOverlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal() {
+    document.getElementById("modalOverlay").classList.remove("open");
+    document.body.style.overflow = "";
+    currentReq = null;
+  }
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById("modalOverlay")) closeModal();
+  }
+
+  async function handleHelp() {
+    if (!currentReq) return;
+    const btn = document.getElementById("btnHelp");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+
+    try {
+      const res = await fetch(`/api/requests/${currentReq._id}/help`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ helperName: user.name, helperId: user.id }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        btn.classList.add("done");
+        btn.textContent = " Help offered!";
+        document.getElementById("mHelpers").textContent =
+          (currentReq.helpersInterested || 0) + 1;
+        showToast(" Your help offer submitted!");
+        currentReq.helpersInterested = (currentReq.helpersInterested||0)+1;
+        fetchRequests();
+      } else {
+        btn.disabled = false;
+        btn.textContent = " I can help";
+        showToast(" " + (data.message||"Error hua."));
+      }
+    } catch(err) {
+      btn.disabled = false;
+      btn.textContent = " I can help";
+      showToast(" Network error.");
+    }
+  }
+
+  async function handleSolved() {
+    if (!currentReq) return;
+
+    if (currentReq.author?.name !== user.name && currentReq.author?.id !== user.id) {
+      showToast("Only your request can be marked as solved.");
+      return;
+    }
+
+    const btn = document.getElementById("btnSolved");
+    btn.disabled = true;
+    btn.textContent = "Updating...";
+
+    try {
+      const res = await fetch(`/api/requests/${currentReq._id}/solve`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        btn.classList.add("done");
+        btn.textContent = "Marked as Solved!";
+        document.getElementById("mStatus").textContent = "Solved";
+        showToast("Request solved marked!");
+        currentReq.status = "Solved";
+        document.getElementById("btnHelp").disabled = true;
+        fetchRequests();
+      } else {
+        btn.disabled = false;
+        btn.textContent = "Mark as Solved";
+        showToast("" + (data.message||"Error hua."));
+      }
+    } catch(err) {
+      btn.disabled = false;
+      btn.textContent = "Mark as Solved";
+      showToast(" Network error.");
+    }
+  }
 </script>
 </body>
 </html>
