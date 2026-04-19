@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HelpHub AI - Request Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --teal: #1a7a6e; --teal-dark: #15635a;
+    --cream: #f0ede6; --cream2: #e8e4dc;
+    --white: #fff; --dark: #1e3530;
+    --text-dark: #1a2e2a; --text-muted: #6b7b74;
+    --border: rgba(0,0,0,0.09);
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-dark); min-height: 100vh; }
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse at 0% 100%, rgba(100,180,160,0.14) 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 0%, rgba(240,210,150,0.18) 0%, transparent 45%);
+  }
+
+  /* NAV */
+  nav { position:relative; z-index:10; display:flex; align-items:center; padding:14px 40px; background:var(--cream); border-bottom:1px solid var(--border); }
+  .nav-logo { display:flex; align-items:center; gap:10px; font-weight:600; font-size:15px; color:var(--text-dark); text-decoration:none; }
+  .logo-icon { width:34px; height:34px; background:var(--teal); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:15px; }
+  .nav-links { margin-left:auto; display:flex; gap:4px; }
+  .nav-links a { text-decoration:none; color:var(--text-muted); font-size:14px; padding:7px 18px; border-radius:20px; cursor:pointer; transition:all .2s; }
+  .nav-links a:hover { color:var(--text-dark); background:var(--cream2); }
+
+  /* HERO */
+  .hero { background:var(--dark); border-radius:18px; margin:28px 40px 0; padding:44px 52px; position:relative; z-index:1; }
+  .hero-label { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:16px; }
+  .hero-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .hero-title { font-size:48px; font-weight:800; color:#fff; line-height:1.1; margin-bottom:16px; letter-spacing:-.5px; }
+  .hero-desc  { font-size:15px; color:rgba(255,255,255,0.65); line-height:1.65; max-width:700px; }
+
+  /* tag colors */
+  .tag { font-size:11.5px; font-weight:600; padding:5px 14px; border-radius:14px; }
+  .tag-Web-Development { background:rgba(212,240,228,0.2); color:#6ee8bc; border:1px solid rgba(110,232,188,0.3); }
+  .tag-Design   { background:rgba(220,230,255,0.2); color:#a0b4ff; border:1px solid rgba(160,180,255,0.3); }
+  .tag-Career   { background:rgba(255,240,212,0.2); color:#ffd080; border:1px solid rgba(255,208,128,0.3); }
+  .tag-High     { background:rgba(255,80,80,0.2); color:#ff8080; border:1px solid rgba(255,80,80,0.35); }
+  .tag-Medium   { background:rgba(255,200,80,0.2); color:#ffc840; border:1px solid rgba(255,200,80,0.3); }
+  .tag-Low      { background:rgba(100,220,160,0.2); color:#64dc9c; border:1px solid rgba(100,220,160,0.3); }
+  .tag-Open     { background:rgba(200,200,200,0.15); color:#c8c8c8; border:1px solid rgba(200,200,200,0.25); }
+  .tag-Solved   { background:rgba(100,220,160,0.2); color:#64dc9c; border:1px solid rgba(100,220,160,0.3); }
+  .tag-AIML,.tag-Mobile,.tag-Education,.tag-Other { background:rgba(200,200,200,0.15); color:#c8c8c8; border:1px solid rgba(200,200,200,0.25); }
+
+  /* Light tags (for cards) */
+  .ltag { font-size:12px; font-weight:500; padding:5px 14px; border-radius:14px; background:var(--cream); color:var(--text-dark); border:1px solid var(--border); }
+
+  /* MAIN GRID */
+  .main-grid { display:grid; grid-template-columns:1fr 360px; gap:20px; margin:24px 40px 60px; position:relative; z-index:1; }
+
+  /* CARDS */
+  .card { background:var(--white); border-radius:18px; padding:30px; border:.5px solid var(--border); margin-bottom:16px; }
+  .card:last-child { margin-bottom:0; }
+  .card-label { font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--teal); margin-bottom:12px; }
+  .card-title { font-size:22px; font-weight:700; color:var(--text-dark); margin-bottom:14px; }
+
+  /* AI Summary */
+  .ai-desc { font-size:14px; color:var(--text-muted); line-height:1.75; margin-bottom:18px; }
+  .ai-tags { display:flex; flex-wrap:wrap; gap:8px; }
+
+  /* Actions */
+  .actions-row { display:flex; gap:12px; flex-wrap:wrap; }
+  .btn-help {
+    padding:12px 28px; background:var(--teal); color:#fff;
+    border:none; border-radius:30px; font-size:14.5px; font-weight:700;
+    cursor:pointer; font-family:'DM Sans',sans-serif; transition:background .2s;
+    display:flex; align-items:center; gap:8px;
+  }
+  .btn-help:hover { background:var(--teal-dark); }
+  .btn-help:disabled { opacity:.55; cursor:not-allowed; }
+  .btn-help.done { background:#2db88a; pointer-events:none; }
+
+  .btn-solved {
+    padding:12px 28px; background:transparent; color:var(--text-dark);
+    border:2px solid rgba(0,0,0,0.14); border-radius:30px;
+    font-size:14.5px; font-weight:700; cursor:pointer;
+    font-family:'DM Sans',sans-serif; transition:all .2s;
+  }
+  .btn-solved:hover { background:#e8f7f0; border-color:var(--teal); color:var(--teal); }
+  .btn-solved:disabled { opacity:.55; cursor:not-allowed; }
+  .btn-solved.done { background:#e8f7f0; border-color:var(--teal); color:var(--teal); pointer-events:none; }
+
+  /* Requester card */
+  .requester-row { display:flex; align-items:center; gap:16px; }
+  .avatar {
+    width:48px; height:48px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:700; color:#fff; flex-shrink:0;
+  }
+  .requester-name { font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:4px; }
+  .requester-meta { font-size:13px; color:var(--text-muted); }
+
+  /* Helpers card */
+  .helpers-list { display:flex; flex-direction:column; gap:14px; }
+  .helper-row { display:flex; align-items:center; gap:14px; }
+  .helper-info { flex:1; }
+  .helper-name { font-size:14.5px; font-weight:700; color:var(--text-dark); margin-bottom:3px; }
+  .helper-skills { font-size:12.5px; color:var(--text-muted); }
+  .trust-badge {
+    background:var(--cream); color:var(--text-dark); font-size:12px; font-weight:600;
+    padding:5px 13px; border-radius:12px; border:.5px solid var(--border); white-space:nowrap;
+  }
+  .no-helpers { text-align:center; padding:20px; color:var(--text-muted); font-size:13.5px; }
+
+  /* Back btn */
+  .back-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--text-muted); font-size:13.5px; font-weight:500;
+    cursor:pointer; margin:20px 40px 0; position:relative; z-index:1;
+    background:none; border:none; font-family:'DM Sans',sans-serif;
+    transition:color .2s;
+  }
+  .back-btn:hover { color:var(--text-dark); }
+
+  /* Spinner */
+  .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; display:none; }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Toast */
+  .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--dark); color:#fff; padding:13px 24px; border-radius:30px; font-size:14px; font-weight:500; z-index:9999; transition:transform .35s cubic-bezier(.34,1.3,.64,1); white-space:nowrap; pointer-events:none; }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+
+  /* Skeleton */
+  .skel { background:var(--cream2); border-radius:8px; animation:shimmer 1.2s ease-in-out infinite; }
+  @keyframes shimmer{0%,100%{opacity:1}50%{opacity:.45}}
+
+  @media(max-width:860px) {
+    .hero { margin:16px; padding:28px 22px; }
+    .hero-title { font-size:30px; }
+    .main-grid { grid-template-columns:1fr; margin:16px; }
+    .back-btn { margin:16px 16px 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/dashboard" class="nav-logo">
+    <div class="logo-icon">H</div>
+    HelpHub AI
+  </a>
+  <div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/explore">Explore</a>
+    <a href="/messages">Messages</a>
+  </div>
+</nav>
+
+<button class="back-btn" onclick="history.back()">← Back to feed</button>
+
+<!-- HERO -->
+<div class="hero" id="heroSection">
+  <div class="hero-label">Request Detail</div>
+  <div class="hero-tags" id="heroTags">
+    <div class="skel" style="width:120px;height:28px;border-radius:14px"></div>
+    <div class="skel" style="width:70px;height:28px;border-radius:14px"></div>
+  </div>
+  <div class="hero-title" id="heroTitle">
+    <div class="skel" style="width:80%;height:52px"></div>
+  </div>
+  <div class="hero-desc" id="heroDesc">
+    <div class="skel" style="width:60%;height:18px;margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-grid">
+
+  <!-- LEFT -->
+  <div class="left-col">
+
+    <!-- AI Summary -->
+    <div class="card">
+      <div class="card-label">AI Summary</div>
+      <div class="card-title">What this request needs</div>
+      <div class="ai-desc" id="aiDesc">Analyzing request...</div>
+      <div class="ai-tags" id="aiTags"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card">
+      <div class="card-label">Actions</div>
+      <div class="actions-row">
+        <button class="btn-help" id="btnHelp" onclick="handleHelp()">
+          <span id="help-text">I can help</span>
+          <div class="spinner" id="help-spin"></div>
+        </button>
+        <button class="btn-solved" id="btnSolved" onclick="handleSolved()">
+          <span id="solve-text">Mark as solved</span>
+          <div class="spinner" id="solve-spin" style="border-top-color:var(--teal)"></div>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-col">
+
+    <!-- Requester -->
+    <div class="card">
+      <div class="card-label">Requester</div>
+      <div class="requester-row" id="requesterRow">
+        <div class="skel avatar" style="background:var(--cream2)"></div>
+        <div style="flex:1">
+          <div class="skel" style="width:120px;height:16px;margin-bottom:8px"></div>
+          <div class="skel" style="width:80px;height:12px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Helpers -->
+    <div class="card">
+      <div class="card-label">Helpers</div>
+      <div class="card-title">People ready to support</div>
+      <div class="helpers-list" id="helpersList">
+        <div class="no-helpers">Koi helper abhi nahi — pehle aap bano!</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Auth ─────────────────────────────────────────────────────
+  const user = JSON.parse(localStorage.getItem("helphub_user") || "null");
+  if (!user) window.location.href = "/auth";
+
+  // ── Get request ID from URL ───────────────────────────────────
+  const requestId = window.location.pathname.split("/").pop();
+  let currentReq  = null;
+
+  // ── Helpers ──────────────────────────────────────────────────
+  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function timeAgo(d) {
+    const diff = Math.floor((Date.now()-new Date(d))/1000);
+    if (diff<60)    return "Just now";
+    if (diff<3600)  return Math.floor(diff/60)+" min ago";
+    if (diff<86400) return Math.floor(diff/3600)+" hr ago";
+    return Math.floor(diff/86400)+" days ago";
+  }
+  function tagCls(v) {
+    const map = {"Web Development":"tag-Web-Development","Design":"tag-Design","Career":"tag-Career","AI/ML":"tag-AIML","Mobile":"tag-Mobile","Other":"tag-Other","High":"tag-High","Medium":"tag-Medium","Low":"tag-Low","Open":"tag-Open","Solved":"tag-Solved"};
+    return map[v] || "tag-Other";
+  }
+  function avatarColor(name) {
+    const colors = ["#1a7a6e","#e8a020","#c0392b","#6b2fb0","#1a6b8a","#2db88a"];
+    let h = 0; for(let c of (name||"?")) h += c.charCodeAt(0);
+    return colors[h % colors.length];
+  }
+  function initials(name) {
+    return (name||"?").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+  }
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 2800);
+  }
+
+  // ── AI Summary generator (local) ─────────────────────────────
+  function generateAISummary(req) {
+    const cat = req.category || "";
+    const urg = req.urgency  || "";
+    const desc = (req.description||"").toLowerCase();
+
+    const summaries = {
+      "Web Development": "Frontend/backend challenge requiring hands-on technical guidance. Best helpers are developers comfortable with modern web tools.",
+      "Design": "Visual design task needing an experienced designer's eye. Best helpers have UI/UX or graphic design skills.",
+      "Career": "Career guidance request. Best helpers are professionals with hiring or mentorship experience.",
+      "AI/ML": "Machine learning or AI task. Best helpers have Python and data science experience.",
+      "Mobile": "Mobile development challenge. Best helpers know Flutter, React Native, Swift or Kotlin.",
+    };
+
+    let summary = summaries[cat] || "Community support request needing focused, practical guidance.";
+    if (urg === "High") summary = "Urgent: " + summary + " Quick turnaround needed.";
+    return summary;
+  }
+
+  // ── Render page ───────────────────────────────────────────────
+  function renderPage(r) {
+    currentReq = r;
+    document.title = r.title + " — HelpHub AI";
+
+    // Hero
+    document.getElementById("heroTags").innerHTML =
+      [r.category, r.urgency, r.status].map(v=>
+        `<span class="tag ${tagCls(v)}">${esc(v)}</span>`
+      ).join("");
+    document.getElementById("heroTitle").textContent = r.title;
+    document.getElementById("heroDesc").textContent  = r.description;
+
+    // AI Summary
+    document.getElementById("aiDesc").textContent = generateAISummary(r);
+    document.getElementById("aiTags").innerHTML = (r.tags||[])
+      .map(t=>`<span class="ltag">${esc(t)}</span>`).join("");
+
+    // Requester
+    const color = avatarColor(r.author?.name);
+    document.getElementById("requesterRow").innerHTML = `
+      <div class="avatar" style="background:${color}">${initials(r.author?.name||"?")}</div>
+      <div>
+        <div class="requester-name">${esc(r.author?.name||"Anonymous")}</div>
+        <div class="requester-meta">${esc(r.author?.city||"Pakistan")} • Trust 74%</div>
+      </div>`;
+
+    // Helpers
+    renderHelpers(r);
+
+    // Button states
+    setupButtons(r);
+  }
+
+  function renderHelpers(r) {
+    const list = document.getElementById("helpersList");
+    // helpers stored in request (extend later with real helper profiles)
+    const count = r.helpersInterested || 0;
+    if (!count) {
+      list.innerHTML = `<div class="no-helpers">Koi helper abhi nahi — pehle aap bano!</div>`;
+      return;
+    }
+    // Show count since we don't store helper names in basic model
+    list.innerHTML = `
+      <div style="font-size:14px;color:var(--text-muted);padding:8px 0">
+        <strong style="color:var(--text-dark);font-size:18px">${count}</strong> 
+        ${count === 1 ? "person" : "people"} interested in helping.
+        <br><span style="font-size:13px">Help karein aur yahan dikho!</span>
+      </div>`;
+  }
+
+  function setupButtons(r) {
+    const btnHelp   = document.getElementById("btnHelp");
+    const btnSolved = document.getElementById("btnSolved");
+
+    // Solved state
+    if (r.status === "Solved") {
+      btnSolved.classList.add("done");
+      document.getElementById("solve-text").textContent = "Already Solved";
+      btnHelp.disabled = true;
+    }
+
+    // Apni request
+    if (r.author?.name === user.name || String(r.author?.id) === String(user.id)) {
+      btnHelp.disabled = true;
+      document.getElementById("help-text").textContent = "Your own request";
+    }
+  }
+
+  // ── Fetch request ─────────────────────────────────────────────
+  async function fetchRequest() {
+    try {
+      // Saari requests fetch karke ID se dhundho
+      const res  = await fetch("/api/requests");
+      const data = await res.json();
+      const req  = data.find(r => r._id === requestId);
+      if (!req) {
+        document.getElementById("heroTitle").textContent = "Request nahi mili.";
+        return;
+      }
+      renderPage(req);
+    } catch(err) {
+      console.error("Fetch request:", err);
+    }
+  }
+
+  fetchRequest();
+
+  // ── I Can Help ───────────────────────────────────────────────
+  async function handleHelp() {
+    if (!currentReq) return;
+    const btn  = document.getElementById("btnHelp");
+    const spin = document.getElementById("help-spin");
+    const txt  = document.getElementById("help-text");
+    btn.disabled = true; spin.style.display = "block"; txt.style.opacity = "0";
+
+    try {
+      const res  = await fetch(`/api/requests/${currentReq._id}/help`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ helperName: user.name, helperId: user.id }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        btn.classList.add("done");
+        txt.textContent = "Help offered!"; txt.style.opacity = "1"; spin.style.display = "none";
+        currentReq.helpersInterested = (currentReq.helpersInterested||0)+1;
+        renderHelpers(currentReq);
+        showToast("🙌 Help offer submit ho gayi!");
+      } else {
+        btn.disabled = false; txt.style.opacity = "1"; spin.style.display = "none";
+        showToast("❌ " + (data.message||"Error hua."));
+      }
+    } catch(err) {
+      btn.disabled = false; txt.style.opacity = "1"; spin.style.display = "none";
+      showToast("❌ Network error.");
+    }
+  }
+
+  // ── Mark as Solved ───────────────────────────────────────────
+  async function handleSolved() {
+    if (!currentReq) return;
+
+    if (currentReq.author?.name !== user.name && String(currentReq.author?.id) !== String(user.id)) {
+      showToast("⚠️ Sirf apni request solved mark kar sakte ho.");
+      return;
+    }
+
+    const btn  = document.getElementById("btnSolved");
+    const spin = document.getElementById("solve-spin");
+    const txt  = document.getElementById("solve-text");
+    btn.disabled = true; spin.style.display = "block"; txt.style.opacity = "0";
+
+    try {
+      const res  = await fetch(`/api/requests/${currentReq._id}/solve`, {
+        method: "PATCH",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ userId: user.id }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        btn.classList.add("done");
+        txt.textContent = "Marked as Solved!"; txt.style.opacity = "1"; spin.style.display = "none";
+        currentReq.status = "Solved";
+        document.getElementById("heroTags").innerHTML =
+          [currentReq.category, currentReq.urgency, "Solved"].map(v=>
+            `<span class="tag ${tagCls(v)}">${esc(v)}</span>`
+          ).join("");
+        document.getElementById("btnHelp").disabled = true;
+        showToast("🎉 Request solved mark ho gayi!");
+      } else {
+        btn.disabled = false; txt.style.opacity = "1"; spin.style.display = "none";
+        showToast("❌ " + (data.message||"Error hua."));
+      }
+    } catch(err) {
+      btn.disabled = false; txt.style.opacity = "1"; spin.style.display = "none";
+      showToast("❌ Network error.");
+    }
+  }
+</script>
+</body>
+</html>

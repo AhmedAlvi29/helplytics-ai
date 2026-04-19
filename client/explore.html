@@ -104,72 +104,11 @@
   </div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
-  <div class="modal" id="modalBox">
-
-    <div class="modal-hero">
-      <button class="modal-close" onclick="closeModal()">✕</button>
-      <div class="modal-hero-tags" id="mHeroTags"></div>
-      <div class="modal-hero-title" id="mTitle">—</div>
-      <div class="modal-hero-meta" id="mMeta">—</div>
-    </div>
-
-    <div class="modal-body">
-
-      <div class="modal-desc" id="mDesc">—</div>
-
-      <div class="modal-info-grid">
-        <div class="modal-info-cell">
-          <div class="modal-info-key">Posted by</div>
-          <div class="modal-info-val" id="mAuthor">—</div>
-        </div>
-        <div class="modal-info-cell">
-          <div class="modal-info-key">Location</div>
-          <div class="modal-info-val" id="mCity">—</div>
-        </div>
-        <div class="modal-info-cell">
-          <div class="modal-info-key">Urgency</div>
-          <div class="modal-info-val" id="mUrgency">—</div>
-        </div>
-        <div class="modal-info-cell">
-          <div class="modal-info-key">Status</div>
-          <div class="modal-info-val" id="mStatus">—</div>
-        </div>
-        <div class="modal-info-cell">
-          <div class="modal-info-key">Helpers interested</div>
-          <div class="modal-info-val" id="mHelpers">—</div>
-        </div>
-        <div class="modal-info-cell">
-          <div class="modal-info-key">Posted</div>
-          <div class="modal-info-val" id="mTime">—</div>
-        </div>
-      </div>
-
-      <div class="modal-tags-row" id="mTagsRow" style="display:none">
-        <div class="modal-tags-label">Tags</div>
-        <div class="modal-tags-chips" id="mTagsChips"></div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-help" id="btnHelp" onclick="handleHelp()">
-           I can help
-        </button>
-        <button class="btn-solved" id="btnSolved" onclick="handleSolved()">
-           Mark as Solved
-        </button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
 <script>
   const user = JSON.parse(localStorage.getItem("helphub_user") || "null");
   if (!user) window.location.href = "/auth";
 
-  let allRequests   = [];
-  let currentReq    = null;
+  let allRequests = [];
 
   function esc(s) {
     return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -190,12 +129,6 @@
       "Open":"tag-Open","Solved":"tag-Solved"
     };
     return map[v] || "tag-Other";
-  }
-  function showToast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(()=> t.classList.remove("show"), 2800);
   }
 
   function applyFilters() {
@@ -222,7 +155,6 @@
     if (!requests.length) {
       feed.innerHTML = `
         <div class="empty">
-         
           <h3>No request found</h3>
           <p>Change filters or create first request.</p>
           <a href="/create-request" class="btn-primary">Create request</a>
@@ -246,7 +178,7 @@
           </div>
           <div class="req-right">
             <span class="req-time">${timeAgo(r.createdAt)}</span>
-            <button class="btn-details" onclick="openModal('${r._id}')">Open details</button>
+            <button class="btn-details" onclick="window.location.href='/request/${r._id}'">Open details</button>
           </div>
         </div>
       </div>
@@ -272,142 +204,6 @@
 
   fetchRequests();
   setInterval(fetchRequests, 10000);
-
-  function openModal(id) {
-    const r = allRequests.find(x => x._id === id);
-    if (!r) return;
-    currentReq = r;
-
-    document.getElementById("mHeroTags").innerHTML =
-      [r.category, r.urgency, r.status].map(v=>
-        `<span class="tag ${tagCls(v)}" style="opacity:.9">${esc(v)}</span>`
-      ).join("");
-
-    document.getElementById("mTitle").textContent  = r.title;
-    document.getElementById("mMeta").textContent   =
-      `Posted by ${r.author?.name||"Anonymous"} • ${timeAgo(r.createdAt)}`;
-    document.getElementById("mDesc").textContent   = r.description;
-    document.getElementById("mAuthor").textContent = r.author?.name  || "Anonymous";
-    document.getElementById("mCity").textContent   = r.author?.city  || "—";
-    document.getElementById("mUrgency").textContent= r.urgency;
-    document.getElementById("mStatus").textContent = r.status;
-    document.getElementById("mHelpers").textContent= r.helpersInterested || 0;
-    document.getElementById("mTime").textContent   = timeAgo(r.createdAt);
-
-    if (r.tags?.length) {
-      document.getElementById("mTagsRow").style.display = "block";
-      document.getElementById("mTagsChips").innerHTML =
-        r.tags.map(t=>`<span class="ftag">${esc(t)}</span>`).join("");
-    } else {
-      document.getElementById("mTagsRow").style.display = "none";
-    }
-
-    const btnHelp   = document.getElementById("btnHelp");
-    const btnSolved = document.getElementById("btnSolved");
-    btnHelp.className   = "btn-help";
-    btnSolved.className = "btn-solved";
-    btnHelp.textContent   = " I can help";
-    btnSolved.textContent = "Mark as Solved";
-    btnHelp.disabled   = false;
-    btnSolved.disabled = false;
-
-    if (r.status === "Solved") {
-      btnSolved.classList.add("done");
-      btnSolved.textContent = "Already Solved";
-      btnHelp.disabled = true;
-    }
-
-    if (r.author?.name === user.name || r.author?.id === user.id) {
-      btnHelp.disabled = true;
-      btnHelp.textContent = " Your own request";
-    }
-
-    document.getElementById("modalOverlay").classList.add("open");
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeModal() {
-    document.getElementById("modalOverlay").classList.remove("open");
-    document.body.style.overflow = "";
-    currentReq = null;
-  }
-  function handleOverlayClick(e) {
-    if (e.target === document.getElementById("modalOverlay")) closeModal();
-  }
-
-  async function handleHelp() {
-    if (!currentReq) return;
-    const btn = document.getElementById("btnHelp");
-    btn.disabled = true;
-    btn.textContent = "Sending...";
-
-    try {
-      const res = await fetch(`/api/requests/${currentReq._id}/help`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ helperName: user.name, helperId: user.id }),
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        btn.classList.add("done");
-        btn.textContent = " Help offered!";
-        document.getElementById("mHelpers").textContent =
-          (currentReq.helpersInterested || 0) + 1;
-        showToast(" Your help offer submitted!");
-        currentReq.helpersInterested = (currentReq.helpersInterested||0)+1;
-        fetchRequests();
-      } else {
-        btn.disabled = false;
-        btn.textContent = " I can help";
-        showToast(" " + (data.message||"Error hua."));
-      }
-    } catch(err) {
-      btn.disabled = false;
-      btn.textContent = " I can help";
-      showToast(" Network error.");
-    }
-  }
-
-  async function handleSolved() {
-    if (!currentReq) return;
-
-    if (currentReq.author?.name !== user.name && currentReq.author?.id !== user.id) {
-      showToast("Only your request can be marked as solved.");
-      return;
-    }
-
-    const btn = document.getElementById("btnSolved");
-    btn.disabled = true;
-    btn.textContent = "Updating...";
-
-    try {
-      const res = await fetch(`/api/requests/${currentReq._id}/solve`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        btn.classList.add("done");
-        btn.textContent = "Marked as Solved!";
-        document.getElementById("mStatus").textContent = "Solved";
-        showToast("Request solved marked!");
-        currentReq.status = "Solved";
-        document.getElementById("btnHelp").disabled = true;
-        fetchRequests();
-      } else {
-        btn.disabled = false;
-        btn.textContent = "Mark as Solved";
-        showToast("" + (data.message||"Error hua."));
-      }
-    } catch(err) {
-      btn.disabled = false;
-      btn.textContent = "Mark as Solved";
-      showToast(" Network error.");
-    }
-  }
 </script>
 </body>
 </html>

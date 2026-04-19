@@ -15,13 +15,13 @@
     HelpHub AI
   </a>
   <div class="nav-links">
-    <a href="#" class="active">Home</a>
-    <a href="#" onclick="window.location.href='/explore'">Explore</a>
-    <a href="#">Leaderboard</a>
-    <a href="#">AI Center</a>
+    <a href="/" class="active">Home</a>
+    <a href="/explore">Explore</a>
+    <a href="/leaderboard">Leaderboard</a>
+    <a href="/ai-center">AI Center</a>
   </div>
   <div class="nav-right">
-    <span class="live-signal">Live community signals</span>
+    <span class="live-signal" onclick="window.location.href='/notifications'">Live community signals</span>
     <button class="btn-join" onclick="window.location.href='/auth'">Join the platform</button>
   </div>
 </nav>
@@ -102,7 +102,7 @@
   <div class="section-label">Featured Requests</div>
   <div class="section-header" style="margin-bottom: 22px;">
     <div class="section-title">Community problems currently in motion</div>
-    <button class="btn-outline-sm">View full feed</button>
+    <button class="btn-outline-sm" onclick="window.location.href='/explore'">View full feed</button>
   </div>
   <div class="request-cards">
 

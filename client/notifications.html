@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HelpHub AI - Notifications</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --teal: #1a7a6e; --teal-dark: #15635a;
+    --cream: #f0ede6; --cream2: #e8e4dc;
+    --white: #fff; --dark: #1e3530;
+    --text-dark: #1a2e2a; --text-muted: #6b7b74;
+    --border: rgba(0,0,0,0.09);
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-dark); min-height: 100vh; }
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse at 0% 100%, rgba(100,180,160,0.14) 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 0%,  rgba(240,210,150,0.18) 0%, transparent 45%);
+  }
+
+  /* NAV */
+  nav { position:relative; z-index:10; display:flex; align-items:center; padding:14px 40px; background:var(--cream); border-bottom:1px solid var(--border); }
+  .nav-logo { display:flex; align-items:center; gap:10px; font-weight:600; font-size:15px; color:var(--text-dark); text-decoration:none; }
+  .logo-icon { width:34px; height:34px; background:var(--teal); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:15px; }
+  .nav-links { margin-left:auto; display:flex; gap:4px; align-items:center; }
+  .nav-links a { text-decoration:none; color:var(--text-muted); font-size:14px; padding:7px 18px; border-radius:20px; cursor:pointer; transition:all .2s; }
+  .nav-links a:hover { color:var(--text-dark); background:var(--cream2); }
+  .nav-links a.active { background:var(--cream2); color:var(--text-dark); font-weight:500; }
+
+  /* HERO */
+  .hero { background:var(--dark); border-radius:18px; margin:28px 40px 0; padding:44px 52px; position:relative; z-index:1; }
+  .hero-label { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:14px; }
+  .hero-title { font-size:42px; font-weight:700; color:#fff; margin-bottom:12px; letter-spacing:-.5px; line-height:1.1; }
+  .hero-desc  { font-size:14px; color:rgba(255,255,255,0.6); }
+
+  /* MAIN */
+  .main-wrap { max-width: 900px; margin: 28px auto 60px; padding: 0 40px; position:relative; z-index:1; }
+
+  /* Top bar */
+  .top-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .feed-label { font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--teal); }
+  .feed-title { font-size:28px; font-weight:700; color:var(--text-dark); }
+  .top-right { display:flex; align-items:center; gap:12px; }
+  .unread-count {
+    background: var(--teal); color:#fff; border-radius:20px;
+    padding:4px 14px; font-size:13px; font-weight:600;
+  }
+  .btn-mark-all {
+    background:transparent; border:1.5px solid var(--border);
+    border-radius:20px; padding:7px 16px; font-size:13px; font-weight:500;
+    cursor:pointer; color:var(--text-muted); font-family:'DM Sans',sans-serif;
+    transition:all .2s;
+  }
+  .btn-mark-all:hover { background:var(--cream2); color:var(--text-dark); }
+
+  /* CARD */
+  .notif-card { background:var(--white); border-radius:18px; border:.5px solid var(--border); overflow:hidden; }
+
+  /* Notif item */
+  .notif-item {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 28px; border-bottom:.5px solid var(--border);
+    cursor:pointer; transition:background .18s; gap:20px;
+    position:relative;
+  }
+  .notif-item:last-child { border-bottom:none; }
+  .notif-item:hover { background:#faf9f7; }
+  .notif-item.unread { background:#f5fdf9; }
+  .notif-item.unread:hover { background:#edf9f4; }
+
+  /* Unread left bar */
+  .notif-item.unread::before {
+    content:''; position:absolute; left:0; top:0; bottom:0;
+    width:3px; background:var(--teal); border-radius:0 2px 2px 0;
+  }
+
+  .notif-left { flex:1; min-width:0; }
+  .notif-text { font-size:14.5px; font-weight:500; color:var(--text-dark); line-height:1.5; margin-bottom:6px; }
+  .notif-item.unread .notif-text { font-weight:700; }
+  .notif-meta { font-size:12.5px; color:var(--text-muted); }
+
+  .notif-badge {
+    font-size:13px; font-weight:600; min-width:64px; text-align:right;
+    flex-shrink:0; color:var(--text-muted);
+    transition:color .2s;
+  }
+  .notif-item.unread .notif-badge { color:var(--teal); }
+
+  /* Type icon colors */
+  .type-dot {
+    width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px;
+    display:inline-block; margin-right:8px;
+  }
+  .dot-Status     { background:#c0000a; }
+  .dot-Match      { background:#1a7a6e; }
+  .dot-Reputation { background:#e8a020; }
+  .dot-Insight    { background:#6b2fb0; }
+  .dot-Message    { background:#1a6b8a; }
+
+  /* Empty state */
+  .empty { text-align:center; padding:80px 20px; color:var(--text-muted); }
+  .empty-icon { font-size:44px; margin-bottom:16px; }
+  .empty h3 { font-size:20px; font-weight:600; color:var(--text-dark); margin-bottom:8px; }
+
+  /* Skeleton */
+  .skeleton-item { padding:22px 28px; border-bottom:.5px solid var(--border); display:flex; flex-direction:column; gap:8px; }
+  .skel { background:var(--cream2); border-radius:6px; animation:shimmer 1.2s ease-in-out infinite; }
+  @keyframes shimmer{0%,100%{opacity:1}50%{opacity:.45}}
+
+  /* Toast */
+  .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--dark); color:#fff; padding:13px 24px; border-radius:30px; font-size:14px; font-weight:500; z-index:9999; transition:transform .35s cubic-bezier(.34,1.3,.64,1); white-space:nowrap; pointer-events:none; }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+
+  @media(max-width:768px) {
+    .hero { margin:16px; padding:32px 24px; }
+    .hero-title { font-size:28px; }
+    .main-wrap { padding:0 16px; }
+    .notif-item { padding:18px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/dashboard" class="nav-logo">
+    <div class="logo-icon">H</div>
+    HelpHub AI
+  </a>
+  <div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/explore">Explore</a>
+    <a href="/notifications" class="active">Notifications</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Notifications</div>
+  <div class="hero-title">Stay updated on requests,<br>helpers, and trust signals.</div>
+  <div class="hero-desc">Track new matches, solved items, AI insights, and reputation changes in one place.</div>
+</div>
+
+<div class="main-wrap">
+
+  <div class="top-bar">
+    <div>
+      <div class="feed-label">Live Updates</div>
+      <div class="feed-title">Notification feed</div>
+    </div>
+    <div class="top-right">
+      <span class="unread-count" id="unreadCount" style="display:none">0 unread</span>
+      <button class="btn-mark-all" onclick="markAllRead()">Mark all as read</button>
+    </div>
+  </div>
+
+  <div class="notif-card" id="notifCard">
+    <!-- Skeletons -->
+    <div class="skeleton-item">
+      <div class="skel" style="width:70%;height:16px"></div>
+      <div class="skel" style="width:30%;height:12px"></div>
+    </div>
+    <div class="skeleton-item">
+      <div class="skel" style="width:85%;height:16px"></div>
+      <div class="skel" style="width:25%;height:12px"></div>
+    </div>
+    <div class="skeleton-item">
+      <div class="skel" style="width:60%;height:16px"></div>
+      <div class="skel" style="width:20%;height:12px"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Auth ─────────────────────────────────────────────────────
+  const user = JSON.parse(localStorage.getItem("helphub_user") || "null");
+  if (!user) window.location.href = "/auth";
+
+  let notifications = [];
+
+  // ── Helpers ──────────────────────────────────────────────────
+  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  function timeAgo(d) {
+    const diff = Math.floor((Date.now() - new Date(d)) / 1000);
+    if (diff < 60)    return "Just now";
+    if (diff < 3600)  return Math.floor(diff/60) + " min ago";
+    if (diff < 86400) return Math.floor(diff/3600) + " hr ago";
+    if (diff < 172800)return "Today";
+    return Math.floor(diff/86400) + " days ago";
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=> t.classList.remove("show"), 2500);
+  }
+
+  // ── Render ───────────────────────────────────────────────────
+  function render(notifs) {
+    const card    = document.getElementById("notifCard");
+    const unread  = notifs.filter(n => !n.read).length;
+    const counter = document.getElementById("unreadCount");
+
+    if (unread > 0) {
+      counter.style.display = "inline-block";
+      counter.textContent   = unread + " unread";
+    } else {
+      counter.style.display = "none";
+    }
+
+    if (!notifs.length) {
+      card.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">🔔</div>
+          <h3>Koi notification nahi</h3>
+          <p>Jab koi aapko match kare ya message kare — yahan dikhega.</p>
+        </div>`;
+      return;
+    }
+
+    card.innerHTML = notifs.map(n => `
+      <div class="notif-item ${n.read ? "" : "unread"}" onclick="markRead('${n._id}', this)" data-id="${n._id}">
+        <div class="notif-left">
+          <div class="notif-text">
+            <span class="type-dot dot-${esc(n.type)}"></span>${esc(n.text)}
+          </div>
+          <div class="notif-meta">${esc(n.type)} • ${timeAgo(n.createdAt)}</div>
+        </div>
+        <div class="notif-badge">${n.read ? "Read" : "Unread"}</div>
+      </div>
+    `).join("");
+  }
+
+  // ── Fetch notifications ──────────────────────────────────────
+  async function fetchNotifications() {
+    try {
+      const res   = await fetch(`/api/notifications?userId=${user.id}`);
+      const data  = await res.json();
+      notifications = data;
+      render(data);
+    } catch(err) { console.error("Fetch notifs:", err); }
+  }
+
+  // ── Mark single read ─────────────────────────────────────────
+  async function markRead(id, el) {
+    const notif = notifications.find(n => n._id === id);
+    if (!notif || notif.read) {
+      // Already read — agar link ho to navigate
+      if (notif?.link) window.location.href = notif.link;
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/notifications/${id}/read`, { method: "PATCH" });
+      if (res.ok) {
+        notif.read = true;
+        el.classList.remove("unread");
+        el.querySelector(".notif-badge").textContent = "Read";
+        // unread count update
+        const unread = notifications.filter(n => !n.read).length;
+        const counter = document.getElementById("unreadCount");
+        if (unread > 0) { counter.textContent = unread + " unread"; }
+        else { counter.style.display = "none"; }
+
+        if (notif.link) {
+          setTimeout(()=> window.location.href = notif.link, 300);
+        }
+      }
+    } catch(err) { console.error("Mark read:", err); }
+  }
+
+  // ── Mark all read ────────────────────────────────────────────
+  async function markAllRead() {
+    const unread = notifications.filter(n => !n.read);
+    if (!unread.length) { showToast("Sab pehle se read hain!"); return; }
+
+    try {
+      const res = await fetch("/api/notifications/read-all", {
+        method: "PATCH",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ userId: user.id }),
+      });
+      if (res.ok) {
+        notifications.forEach(n => n.read = true);
+        render(notifications);
+        showToast("✅ Sab notifications read mark ho gayi!");
+      }
+    } catch(err) { console.error("Mark all:", err); }
+  }
+
+  // ── Init + polling ───────────────────────────────────────────
+  fetchNotifications();
+  setInterval(fetchNotifications, 15000); // har 15s refresh
+</script>
+</body>
+</html>
